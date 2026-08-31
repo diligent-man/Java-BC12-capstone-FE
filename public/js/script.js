@@ -3,14 +3,17 @@
   "use strict";
 
   var initPreloader = function () {
-    $(document).ready(function ($) {
-      var Body = $('body');
-      Body.addClass('preloader-site');
-    });
-    $(window).on('load', function () {
+    var hidePreloader = function () {
       $('.preloader-wrapper').fadeOut();
       $('body').removeClass('preloader-site');
-    });
+    };
+
+    if (document.readyState === 'complete') { //Tự động kiểm tra nếu trang đã tải xong (document.readyState === 'complete') thì tắt màn hình loading ngay lập tức.
+      hidePreloader();
+    } else {
+      $(window).on('load', hidePreloader);
+      setTimeout(hidePreloader, 500);
+    }
   }
 
   // background color when scroll 
