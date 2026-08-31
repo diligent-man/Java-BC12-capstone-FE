@@ -1,23 +1,18 @@
-$(document).ready(function(){
+$(document).ready(function() {
+    $('#btn-login').click(function() {
+        var email = $('#lg-email').val(); //lấy ra thông tin email từ form bên html
+        var password = $('#lg-password').val(); // lấy ra thông tin password từ form bên html
 
-      $('#btn-login').click(function(){
-        
-        var email = $('#lg-email').val()
-        var password = $('#lg-password').val()
-        
         $.ajax({
-            method: "POST",
-            url: "http://localhost:8080/auth/sign-in",
+            url: 'http://localhost:8080/auth/login',
+            type: 'POST',
             contentType: 'application/json',
-            data: JSON.stringify({
-                 email: email, 
-                 password: password 
-                })
-        })
-        .done(function( result ) {
-            localStorage.setItem('token',result.data)
+            data: JSON.stringify({ 
+                email: email, //truyền giá trị email vào api
+                password: password  //truyền giá trị password vào api
+            })
+        }).done(function(result) {
+            console.log('kiemtra ', result); // Handle the login result
         });
-
-      })  
-
-})
+    });
+});

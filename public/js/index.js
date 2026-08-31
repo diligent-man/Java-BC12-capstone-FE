@@ -1,44 +1,106 @@
-$(document).ready(function(){
+$(document).ready(function () {
+  alert("Hello, welcome to Uniclub!"); // Display a welcome alert when the document is ready
 
-        $.ajax({
-            method: "GET",
-            url: "http://localhost:8080/product"
-        })
-        .done(function( result ) {
+  var linkBE = "http://localhost:8080"
+  var pageNumber = 0
+  var cart = []
+  //mỗi khi reload file sẽ đọc lại tài liệu(document) từ đầu khiến mảng cart [] sẽ set lại về null khiến giỏ hàng sẽ bị rỗng, 
+  // vì vậy phải gọi lại mảng cart đã lưu trong localStorage
+  //mảng này là mảng string JSON
+  var cartString = localStorage.getItem('cart')
+  if(cartString !=null){ //ktra mang phải khác null, nếu null thì vẫn giữ nguyên
+    //đưa vào mảng cart những phần tử đã lưu trong localStorage
+    cart = JSON.parse(cartString) // String JSON → object JavaScript
+  }
 
-            var html = ''
-            
-            for(i=0; i<result.data.length; i++){
-                var item = result.data[i]
+  getProduct(pageNumber);
 
-                html += `<div class="col-md-6 col-lg-3 my-4">
-                                <div class="product-item">
-                                    <div class="image-holder" style="width: 100%; height: 100%;">
-                                    <img src="http://localhost:8080/files/${item.images}" alt="Books" class="product-image img-fluid">
-                                    </div>
-                                    <div class="cart-concern">
-                                    <div class="cart-button d-flex justify-content-between align-items-center">
-                                        <a href="#" class="btn-wrap cart-link d-flex align-items-center text-capitalize fs-6 ">add to cart <i
-                                            class="icon icon-arrow-io pe-1"></i>
-                                        </a>
-                                        <a href="single-product.html" class="view-btn">
-                                        <i class="icon icon-screen-full"></i>
-                                        </a>
-                                        <a href="#" class="wishlist-btn">
-                                        <i class="icon icon-heart"></i>
-                                        </a>
-                                    </div>
-                                    </div>
-                                    <div class="product-detail d-flex justify-content-between align-items-center mt-4">
-                                    <h4 class="product-title mb-0">
-                                        <a href="single-product.html">${item.name}</a>
-                                    </h4>
-                                    <p class="m-0 fs-5 fw-normal">$${item.price}</p>
-                                    </div>
+  $('#view-more-product').click(function () {
+    pageNumber++;
+    getProduct(pageNumber);
+  });
+
+  // $('.btn-cart').click(function () {
+  //   alert("Bạn đã thêm sản phẩm vào giỏ hàng thành công!");
+  // }); 
+  // ghi như này sẽ không click được  
+  // giải thích cụ thể: ban đầu khi document này lần đầu được chuẩn bị(ready), thì chưa có btn-cart nào cả (có thể xem bên index.html) 
+  // ở chỗ  <div id ="container-product" class="row">
+  //           </div>
+  // chỉ khi chạy function getProduct(pageNumber) thì btn-cart mới được thêm vào thông qua vòng lặp for, 
+  // vì vậy bây giờ phải cho nó quét lại chỗ <div id ="container-product" class="row">
+  //                                           </div>
+  // phải viết như này để nó quét lại thì mới click được
+  $('#container-product').on('click', '.btn-cart', function () { //thuc hien quet lai container - product
+    // HTML attribute trả về string
+    var strJsonItem = $(this).attr("data");
+    // String JSON → object JavaScript
+    var item = JSON.parse(strJsonItem);
+    var isExist = false
+    //kiểm tra xem trong giỏ hàng đã tồn tại sản phẩm chưa thông qua biến cờ isExist
+    // nếu tồn tại rồi thì quantity + 1, không thêm mới item
+    // nếu chưa tồn tại thì quantity = 1, thêm mới item
+    for(let i=0; i<cart.length;i++){
+      if(cart[i].id == item.id){
+        cart[i].quantity +=1
+        isExist = true
+      }
+    }
+    if(isExist == false){
+      item.quantity = 1
+      // Thêm object vào mảng JavaScript
+      cart.push(item);
+
+    }
+    // Mảng JavaScript → string JSON
+    var cartString = JSON.stringify(cart);
+
+    // localStorage chỉ lưu được dạng string thôi
+    localStorage.setItem("cart", cartString); //có nhiều cách lưu có thể lưu trong cookie nhưng ở đây chọn lưu trong localStorage
+    console.log(item);
+  })
+
+  function getProduct(pageNumber) {
+    $.ajax({
+      method: "GET",
+      url: `${linkBE}/product/paging?pageNumber=${pageNumber}&pageSize=3`,
+    })
+      .done(function (result) {
+        console.log("kiemtra ", result);
+        var data = result.data.content;
+        var html = ''
+        for (let i = 0; i < data.length; i++) {
+          var item = data[i];
+          var stringJSON = JSON.stringify(item); // phải lưu item theo kiểu string để truyền vào data attribute (ở dưới dòng add) to cart qua href, vì href chỉ nhận kiểu string
+          html += `<div class="col-md-6 col-lg-3 my-4">
+                            <div class="product-item">
+                              <div class="image-holder" style="width: 100%; height: 100%;">
+                                <img src="${linkBE}/file/${item.image[0]}" alt="Books" class="product-image img-fluid">
+                              </div>
+                              <div class="cart-concern">
+                                <div class="cart-button d-flex justify-content-between align-items-center">
+                                  <span href="#" data='${stringJSON}' class=" btn-cart btn-wrap cart-link d-flex align-items-center text-capitalize fs-6 ">add to cart <i
+                                      class="icon icon-arrow-io pe-1"></i>
+                                  </span>
+                                  <a href="single-product.html" class="view-btn">
+                                    <i class="icon icon-screen-full"></i>
+                                  </a>
+                                  <a href="#" class="wishlist-btn">
+                                    <i class="icon icon-heart"></i>
+                                  </a>
                                 </div>
-                            </div>`
-            }
+                              </div>
+                              <div class="product-detail d-flex justify-content-between align-items-center mt-4">
+                                <h4 class="product-title mb-0">
+                                  <a href="single-product.html">${item.name}</a>
+                                </h4>
+                                <p class="m-0 fs-5 fw-normal">${item.price}</p>
+                              </div>
+                            </div>
+                          </div>`
+        }
+        $('#container-product').append(html);
+      })
+  }
 
-            $('#container-products').append(html)
-        });
 })

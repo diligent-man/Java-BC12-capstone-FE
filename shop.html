@@ -3,6 +3,7 @@
 
 
 <!-- Mirrored from demo.templatesjungle.com/uniclub/shop.html by HTTrack Website Copier/3.x [XR&CO'2014], Wed, 21 Feb 2024 03:11:31 GMT -->
+
 <head>
   <title>UniClub - Free eCommerce T-Shirt Store HTML Website Template</title>
   <meta charset="utf-8">
@@ -15,18 +16,18 @@
   <meta name="description" content="">
 
 
-<link rel="stylesheet" type="text/css" href="/vendor/css/swiper-bundle.min.css">
-<link rel="stylesheet" type="text/css" href="/vendor/css/bootstrap.min.css">
-<link rel="stylesheet" type="text/css" href="src/icomoon/icomoon.css">
+  <link rel="stylesheet" type="text/css" href="/vendor/css/swiper-bundle.min.css">
+  <link rel="stylesheet" type="text/css" href="/vendor/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="src/icomoon/icomoon.css">
 
-<link rel="stylesheet" type="text/css" href="src/css/vendor.css">
-<link rel="stylesheet" type="text/css" href="src/css/style.css">
+  <link rel="stylesheet" type="text/css" href="src/css/vendor.css">
+  <link rel="stylesheet" type="text/css" href="src/css/style.css">
 
-<link rel="preconnect" href="https://fonts.googleapis.com/">
-<link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
-<link
-  href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;600;700&amp;family=Jost:wght@400;600;700&amp;display=swap"
-  rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com/">
+  <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;600;700&amp;family=Jost:wght@400;600;700&amp;display=swap"
+    rel="stylesheet">
 
 </head>
 
@@ -110,35 +111,11 @@
       <div class="order-md-last">
         <h4 class="d-flex justify-content-between align-items-center mb-4">
           <span class="text-primary">Your cart</span>
-          <span class="badge bg-primary rounded-circle pt-2">3</span>
+          <span class="badge bg-primary rounded-circle pt-2" id="offcanvas-cart-count">0</span>
         </h4>
 
-        <ul class="list-group mb-4">
-          <li class="list-group-item d-flex justify-content-between lh-sm">
-            <div>
-              <h6 class="my-0">Grey Hoodie</h6>
-              <small class="text-body-secondary">Brief description</small>
-            </div>
-            <span class="text-body-secondary">$120</span>
-          </li>
-          <li class="list-group-item d-flex justify-content-between lh-sm">
-            <div>
-              <h6 class="my-0">Graphic T-Shirt</h6>
-              <small class="text-body-secondary">Brief description</small>
-            </div>
-            <span class="text-body-secondary">$80</span>
-          </li>
-          <li class="list-group-item d-flex justify-content-between lh-sm">
-            <div>
-              <h6 class="my-0">Black T-Shirt</h6>
-              <small class="text-body-secondary">Brief description</small>
-            </div>
-            <span class="text-body-secondary">$50</span>
-          </li>
-          <li class="list-group-item d-flex justify-content-between">
-            <span class="fw-bold">Total (USD)</span>
-            <strong>$250</strong>
-          </li>
+        <ul class="list-group mb-4" id="offcanvas-cart-items">
+          <!-- JS sẽ tự sinh vào đây -->
         </ul>
 
         <button class="w-100 btn btn-dark" type="submit">Continue to checkout</button>
@@ -159,7 +136,8 @@
         </h4>
         <div class="search-bar border rounded-2 border-dark-subtle">
           <form id="search-form" class="text-center d-flex align-items-center" action="#" method="">
-            <input type="text" class="form-control border-0 bg-transparent" placeholder="Search Here" />
+            <input type="text" id="modal-search-input" class="form-control border-0 bg-transparent"
+              placeholder="Search Here" />
             <iconify-icon icon="tabler:search" class="fs-4 me-3"></iconify-icon>
           </form>
         </div>
@@ -237,7 +215,8 @@
               <a href="#" class="nav-link mx-2">Hoodies</a>
             </li>
             <li class="nav-item">
-              <a href="https://templatesjungle.gumroad.com/l/uniclub-t-shirt-bootstrap5-eCommerce-website-template" class="nav-link mx-2" target="_blank">GET PRO</a>
+              <a href="https://templatesjungle.gumroad.com/l/uniclub-t-shirt-bootstrap5-eCommerce-website-template"
+                class="nav-link mx-2" target="_blank">GET PRO</a>
             </li>
           </ul>
 
@@ -335,7 +314,7 @@
         <main class="col-md-9">
           <div class="filter-shop d-md-flex justify-content-between align-items-center">
             <div class="showing-product">
-              <p class="m-0">Showing 1–9 of 55 results</p>
+              <p class="m-0" id="showing-result">Showing 1–9 of 55 results</p>
             </div>
             <div class="sort-by">
               <select class="filter-categories border-0 m-0">
@@ -352,261 +331,30 @@
             </div>
           </div>
 
-          <div class="row product-store">
-            <div class="col-md-6 col-lg-4 my-4">
-              <div class="product-item">
-                <div class="image-holder" style="width: 100%; height: 100%;">
-                  <img src="src/assets/images/item1.jpg" alt="Books" class="product-image img-fluid">
-                </div>
-                <div class="cart-concern">
-                  <div class="cart-button d-flex justify-content-between align-items-center">
-                    <a href="#" class="btn-wrap cart-link d-flex align-items-center text-capitalize fs-6 ">add to cart
-                      <i class="icon icon-arrow-io pe-1"></i>
-                    </a>
-                    <a href="single-product.html" class="view-btn">
-                      <i class="icon icon-screen-full"></i>
-                    </a>
-                    <a href="#" class="wishlist-btn">
-                      <i class="icon icon-heart"></i>
-                    </a>
-                  </div>
-                </div>
-                <div class="product-detail d-flex justify-content-between align-items-center mt-4">
-                  <h4 class="product-title mb-0">
-                    <a href="single-product.html">Seven Zero Five</a>
-                  </h4>
-                  <p class="m-0 fs-5 fw-normal">$40.00</p>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-6 col-lg-4 my-4">
-              <div class="z-1 position-absolute rounded-3 m-3 px-3 border border-dark-subtle">
-                New
-              </div>
-              <div class="product-item">
-                <div class="image-holder">
-                  <img src="src/assets/images/item2.jpg" alt="Books" class="product-image img-fluid">
-                </div>
-                <div class="cart-concern">
-                  <div class="cart-button d-flex justify-content-between align-items-center">
-                    <a href="#" class="btn-wrap cart-link d-flex align-items-center text-capitalize fs-6 ">add to cart
-                      <i class="icon icon-arrow-io pe-1"></i>
-                    </a>
-                    <a href="single-product.html" class="view-btn">
-                      <i class="icon icon-screen-full"></i>
-                    </a>
-                    <a href="#" class="wishlist-btn">
-                      <i class="icon icon-heart"></i>
-                    </a>
-                  </div>
-                </div>
-                <div class="product-detail d-flex justify-content-between align-items-center mt-4">
-                  <h4 class="product-title mb-0">
-                    <a href="single-product.html">Seven Zero Five</a>
-                  </h4>
-                  <p class="m-0 fs-5 fw-normal">$40.00</p>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-6 col-lg-4 my-4">
-              <div class="product-item">
-                <div class="image-holder">
-                  <img src="src/assets/images/item3.jpg" alt="Books" class="product-image img-fluid">
-                </div>
-                <div class="cart-concern">
-                  <div class="cart-button d-flex justify-content-between align-items-center">
-                    <a href="#" class="btn-wrap cart-link d-flex align-items-center text-capitalize fs-6 ">add to cart
-                      <i class="icon icon-arrow-io pe-1"></i>
-                    </a>
-                    <a href="single-product.html" class="view-btn">
-                      <i class="icon icon-screen-full"></i>
-                    </a>
-                    <a href="#" class="wishlist-btn">
-                      <i class="icon icon-heart"></i>
-                    </a>
-                  </div>
-                </div>
-                <div class="product-detail d-flex justify-content-between align-items-center mt-4">
-                  <h4 class="product-title mb-0">
-                    <a href="single-product.html">Seven Zero Five</a>
-                  </h4>
-                  <p class="m-0 fs-5 fw-normal">$40.00</p>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-6 col-lg-4 my-4">
-              <div class="z-1 position-absolute rounded-3 m-3 px-3 border border-dark-subtle">
-                Sale
-              </div>
-              <div class="product-item">
-                <div class="image-holder">
-                  <img src="src/assets/images/item4.jpg" alt="Books" class="product-image img-fluid">
-                </div>
-                <div class="cart-concern">
-                  <div class="cart-button d-flex justify-content-between align-items-center">
-                    <a href="#" class="btn-wrap cart-link d-flex align-items-center text-capitalize fs-6 ">add to cart
-                      <i class="icon icon-arrow-io pe-1"></i>
-                    </a>
-                    <a href="single-product.html" class="view-btn">
-                      <i class="icon icon-screen-full"></i>
-                    </a>
-                    <a href="#" class="wishlist-btn">
-                      <i class="icon icon-heart"></i>
-                    </a>
-                  </div>
-                </div>
-                <div class="product-detail d-flex justify-content-between align-items-center mt-4">
-                  <h4 class="product-title mb-0">
-                    <a href="single-product.html">Seven Zero Five</a>
-                  </h4>
-                  <p class="m-0 fs-5 fw-normal">$40.00</p>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-6 col-lg-4 my-4">
-              <div class="product-item">
-                <div class="image-holder">
-                  <img src="src/assets/images/item1.jpg" alt="Books" class="product-image img-fluid">
-                </div>
-                <div class="cart-concern">
-                  <div class="cart-button d-flex justify-content-between align-items-center">
-                    <a href="#" class="btn-wrap cart-link d-flex align-items-center text-capitalize fs-6 ">add to cart
-                      <i class="icon icon-arrow-io pe-1"></i>
-                    </a>
-                    <a href="single-product.html" class="view-btn">
-                      <i class="icon icon-screen-full"></i>
-                    </a>
-                    <a href="#" class="wishlist-btn">
-                      <i class="icon icon-heart"></i>
-                    </a>
-                  </div>
-                </div>
-                <div class="product-detail d-flex justify-content-between align-items-center mt-4">
-                  <h4 class="product-title mb-0">
-                    <a href="single-product.html">Seven Zero Five</a>
-                  </h4>
-                  <p class="m-0 fs-5 fw-normal">$40.00</p>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-6 col-lg-4 my-4">
-              <div class="product-item">
-                <div class="image-holder">
-                  <img src="src/assets/images/item2.jpg" alt="Books" class="product-image img-fluid">
-                </div>
-                <div class="cart-concern">
-                  <div class="cart-button d-flex justify-content-between align-items-center">
-                    <a href="#" class="btn-wrap cart-link d-flex align-items-center text-capitalize fs-6 ">add to cart
-                      <i class="icon icon-arrow-io pe-1"></i>
-                    </a>
-                    <a href="single-product.html" class="view-btn">
-                      <i class="icon icon-screen-full"></i>
-                    </a>
-                    <a href="#" class="wishlist-btn">
-                      <i class="icon icon-heart"></i>
-                    </a>
-                  </div>
-                </div>
-                <div class="product-detail d-flex justify-content-between align-items-center mt-4">
-                  <h4 class="product-title mb-0">
-                    <a href="single-product.html">Seven Zero Five</a>
-                  </h4>
-                  <p class="m-0 fs-5 fw-normal">$40.00</p>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-6 col-lg-4 my-4">
-              <div class="product-item">
-                <div class="image-holder">
-                  <img src="src/assets/images/item3.jpg" alt="Books" class="product-image img-fluid">
-                </div>
-                <div class="cart-concern">
-                  <div class="cart-button d-flex justify-content-between align-items-center">
-                    <a href="#" class="btn-wrap cart-link d-flex align-items-center text-capitalize fs-6 ">add to cart
-                      <i class="icon icon-arrow-io pe-1"></i>
-                    </a>
-                    <a href="single-product.html" class="view-btn">
-                      <i class="icon icon-screen-full"></i>
-                    </a>
-                    <a href="#" class="wishlist-btn">
-                      <i class="icon icon-heart"></i>
-                    </a>
-                  </div>
-                </div>
-                <div class="product-detail d-flex justify-content-between align-items-center mt-4">
-                  <h4 class="product-title mb-0">
-                    <a href="single-product.html">Seven Zero Five</a>
-                  </h4>
-                  <p class="m-0 fs-5 fw-normal">$40.00</p>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-6 col-lg-4 my-4">
-              <div class="z-1 position-absolute rounded-3 m-3 px-3 border border-dark-subtle">
-                Sold
-              </div>
-              <div class="product-item">
-                <div class="image-holder">
-                  <img src="src/assets/images/item4.jpg" alt="Books" class="product-image img-fluid">
-                </div>
-                <div class="cart-concern">
-                  <div class="cart-button d-flex justify-content-between align-items-center">
-                    <a href="#" class="btn-wrap cart-link d-flex align-items-center text-capitalize fs-6 ">add to cart
-                      <i class="icon icon-arrow-io pe-1"></i>
-                    </a>
-                    <a href="single-product.html" class="view-btn">
-                      <i class="icon icon-screen-full"></i>
-                    </a>
-                    <a href="#" class="wishlist-btn">
-                      <i class="icon icon-heart"></i>
-                    </a>
-                  </div>
-                </div>
-                <div class="product-detail d-flex justify-content-between align-items-center mt-4">
-                  <h4 class="product-title mb-0">
-                    <a href="single-product.html">Seven Zero Five</a>
-                  </h4>
-                  <p class="m-0 fs-5 fw-normal">$40.00</p>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-6 col-lg-4 my-4">
-              <div class="product-item">
-                <div class="image-holder">
-                  <img src="src/assets/images/item1.jpg" alt="Books" class="product-image img-fluid">
-                </div>
-                <div class="cart-concern">
-                  <div class="cart-button d-flex justify-content-between align-items-center">
-                    <a href="#" class="btn-wrap cart-link d-flex align-items-center text-capitalize fs-6 ">add to cart
-                      <i class="icon icon-arrow-io pe-1"></i>
-                    </a>
-                    <a href="single-product.html" class="view-btn">
-                      <i class="icon icon-screen-full"></i>
-                    </a>
-                    <a href="#" class="wishlist-btn">
-                      <i class="icon icon-heart"></i>
-                    </a>
-                  </div>
-                </div>
-                <div class="product-detail d-flex justify-content-between align-items-center mt-4">
-                  <h4 class="product-title mb-0">
-                    <a href="single-product.html">Seven Zero Five</a>
-                  </h4>
-                  <p class="m-0 fs-5 fw-normal">$40.00</p>
-                </div>
-              </div>
-            </div>
+          <div class="row product-store" id="shop-product-container">
+            <!-- Để trống, JS sẽ tự inject vào đây -->
           </div>
 
           <nav class="navigation paging-navigation text-center mt-5" role="navigation">
             <div class="pagination loop-pagination d-flex justify-content-center align-items-center">
-              <a href="#" class="pagination-arrow d-flex align-items-center mx-3">
+              <!-- <a href="#" class="pagination-arrow d-flex align-items-center mx-3">
                 <iconify-icon icon="ic:baseline-keyboard-arrow-left" class="pagination-arrow fs-1"></iconify-icon>
               </a>
               <span aria-current="page" class="page-numbers mt-2 fs-3 mx-3 current">1</span>
               <a class="page-numbers mt-2 fs-3 mx-3" href="#">2</a>
               <a class="page-numbers mt-2 fs-3 mx-3" href="#">3</a>
               <a href="#" class="pagination-arrow d-flex align-items-center mx-3">
+                <iconify-icon icon="ic:baseline-keyboard-arrow-right" class="pagination-arrow fs-1"></iconify-icon>
+              </a> -->
+
+              <!-- Sửa thành: Xóa các số trang tĩnh, chỉ giữ 2 nút mũi tên và thêm id -->
+              <a id="btn-prev-page" href="#" class="pagination-arrow d-flex align-items-center mx-3">
+                <iconify-icon icon="ic:baseline-keyboard-arrow-left" class="pagination-arrow fs-1"></iconify-icon>
+              </a>
+              <!-- Khu vực số trang sẽ được JS tạo động -->
+              <div id="page-numbers-container" class="d-flex align-items-center"></div>
+
+              <a id="btn-next-page" href="#" class="pagination-arrow d-flex align-items-center mx-3">
                 <iconify-icon icon="ic:baseline-keyboard-arrow-right" class="pagination-arrow fs-1"></iconify-icon>
               </a>
             </div>
@@ -619,7 +367,9 @@
               <div class="widget-search-bar">
                 <div class="search-bar border rounded-2 border-dark-subtle pe-3">
                   <form id="search-form" class="text-center d-flex align-items-center" action="#" method="">
-                    <input type="text" class="form-control border-0 bg-transparent" placeholder="Search for products" />
+                    <!-- Sửa thành -->
+                    <input type="text" id="search-input" class="form-control border-0 bg-transparent"
+                      placeholder="Search for products" />
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                       <path fill="currentColor"
                         d="M21.71 20.29L18 16.61A9 9 0 1 0 16.61 18l3.68 3.68a1 1 0 0 0 1.42 0a1 1 0 0 0 0-1.39ZM11 18a7 7 0 1 1 7-7a7 7 0 0 1-7 7Z" />
@@ -858,6 +608,7 @@
   <script src="/vendor/iconify-icon.min.js"></script>
 </body>
 
-
+<script src="/js/shop.js"></script>
 <!-- Mirrored from demo.templatesjungle.com/uniclub/shop.html by HTTrack Website Copier/3.x [XR&CO'2014], Wed, 21 Feb 2024 03:11:31 GMT -->
+
 </html>
