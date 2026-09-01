@@ -1,14 +1,14 @@
-ARG NODE_VERSION=${NODE_VERSION:-26.1.0}
+ARG NODE_VERSION=${NODE_VERSION:-26.8.1}
 ARG DEBIAN_FRONTEND=noninteractive
 
-FROM node:$NODE_VERSION-trixie
+FROM node:$NODE_VERSION-trixie-slim
 
 WORKDIR /my_app
 
 COPY  ./src ./src
 COPY  ./public ./public
 COPY *.html ./package.json ./vite.config.js ./
-COPY entrypoint.sh ./
+COPY scripts/docker/build/fe/entrypoint.sh ./
 
 RUN chmod +x ./entrypoint.sh
 
