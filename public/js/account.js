@@ -4,7 +4,7 @@ $(document).ready(function() {
         var password = $('#lg-password').val(); // lấy ra thông tin password từ form bên html
 
         $.ajax({
-            url: 'http://localhost:8080/auth/login',
+            url: 'http://localhost:8081/auth/login',
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify({ 

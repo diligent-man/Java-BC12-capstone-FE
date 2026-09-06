@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    var linkBE = "http://localhost:8080";
+    var linkBE = "http://localhost:8081";
     var cart = [];
 
     // === 1. ĐỌC GIỎ HÀNG TỪ LOCALSTORAGE ===

@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    var linkBE = "http://localhost:8080";
+    var linkBE = "http://localhost:8081";
     var pageSize = 9;       // Shop hiển thị 9 sản phẩm / trang (3 hàng x 3 cột)
     var currentPage = 0;    // Trang hiện tại (BE bắt đầu từ 0)
     var totalPages = 0;     // Tổng số trang (lấy từ API trả về)
