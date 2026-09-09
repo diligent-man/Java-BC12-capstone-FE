@@ -1,7 +1,7 @@
 $(document).ready(function () {
   alert("Hello, welcome to Uniclub!"); // Display a welcome alert when the document is ready
 
-  var linkBE = "http://localhost:8080"
+  var linkBE = "http://localhost:8081"
   var pageNumber = 0
   var cart = []
   //mỗi khi reload file sẽ đọc lại tài liệu(document) từ đầu khiến mảng cart [] sẽ set lại về null khiến giỏ hàng sẽ bị rỗng, 
@@ -63,7 +63,7 @@ $(document).ready(function () {
   function getProduct(pageNumber) {
     $.ajax({
       method: "GET",
-      url: `${linkBE}/product/paging?pageNumber=${pageNumber}&pageSize=3`,
+      url: `${linkBE}/product/paging?page=${pageNumber}&size=3`,
     })
       .done(function (result) {
         console.log("kiemtra ", result);
@@ -75,7 +75,7 @@ $(document).ready(function () {
           html += `<div class="col-md-6 col-lg-3 my-4">
                             <div class="product-item">
                               <div class="image-holder" style="width: 100%; height: 100%;">
-                                <img src="${linkBE}/file/${item.image[0]}" alt="Books" class="product-image img-fluid">
+                                <img src="${linkBE}/file/${item.image}" alt="Books" class="product-image img-fluid">
                               </div>
                               <div class="cart-concern">
                                 <div class="cart-button d-flex justify-content-between align-items-center">

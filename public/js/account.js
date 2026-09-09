@@ -6,7 +6,7 @@ $(document).ready(function () {
         var password = $('#lg-password').val();
 
         $.ajax({
-            url: 'http://localhost:8080/auth/login',
+            url: 'http://localhost:8081/auth/login',
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify({
@@ -16,9 +16,19 @@ $(document).ready(function () {
         })
         .done(function (result) {
             console.log('Đăng nhập thành công:', result);
-            // TODO: lưu token và chuyển trang
-            // localStorage.setItem('token', result.data);
-            // window.location.href = 'index.html';
+            // 1. Lưu token vào localStorage (lấy accessToken trả về từ Backend)
+            var token = (result.data && result.data.accessToken) ? result.data.accessToken : result.data;
+            localStorage.setItem('token', token);
+            // 2. Đọc tham số "redirect" trên thanh địa chỉ URL (nếu có)
+            var urlParams = new URLSearchParams(window.location.search);
+            var redirectUrl = urlParams.get('redirect');
+            if (redirectUrl) {
+                // Nếu có trang chỉ định (ví dụ cart.html) thì chuyển về trang đó
+                window.location.href = redirectUrl;
+            } else {
+                // Ngược lại, nếu đăng nhập bình thường thì về trang chủ
+                window.location.href = 'index.html';
+            }
         })
         .fail(function (xhr) {
             var res = xhr.responseJSON;

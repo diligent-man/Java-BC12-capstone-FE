@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    var linkBE = "http://localhost:8080";
+    var linkBE = "http://localhost:8081";
     var pageSize = 9;       // Shop hiển thị 9 sản phẩm / trang (3 hàng x 3 cột)
     var currentPage = 0;    // Trang hiện tại (BE bắt đầu từ 0)
     var totalPages = 0;     // Tổng số trang (lấy từ API trả về)
@@ -138,9 +138,9 @@ $(document).ready(function () {
     // Xác định URL: nếu có từ khóa thì gọi API search, không thì gọi API paging
         var url = "";
         if (searchKeyword !== "") {
-            url = `${linkBE}/product/search?keyword=${searchKeyword}&pageNumber=${page}&pageSize=${pageSize}`;
+            url = `${linkBE}/product/search?keyWord=${searchKeyword}&pageNumber=${page}&pageSize=${pageSize}`;
         } else {
-            url = `${linkBE}/product/paging?pageNumber=${page}&pageSize=${pageSize}`;
+            url = `${linkBE}/product/paging?page=${page}&size=${pageSize}`;
         }
 
         $.ajax({
@@ -166,7 +166,7 @@ $(document).ready(function () {
                 html += `<div class="col-md-6 col-lg-4 my-4">
                             <div class="product-item">
                                 <div class="image-holder" style="width:100%;height:100%;">
-                                    <img src="${linkBE}/file/${item.image[0]}" alt="${item.name}" class="product-image img-fluid">
+                                    <img src="${linkBE}/file/${item.image}" alt="${item.name}" class="product-image img-fluid">
                                 </div>
                                 <div class="cart-concern">
                                     <div class="cart-button d-flex justify-content-between align-items-center">

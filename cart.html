@@ -3,6 +3,7 @@
 
 
 <!-- Mirrored from demo.templatesjungle.com/uniclub/cart.html by HTTrack Website Copier/3.x [XR&CO'2014], Wed, 21 Feb 2024 03:11:34 GMT -->
+
 <head>
   <title>UniClub - Free eCommerce T-Shirt Store HTML Website Template</title>
   <meta charset="utf-8">
@@ -15,18 +16,18 @@
   <meta name="description" content="">
 
 
-<link rel="stylesheet" type="text/css" href="/vendor/css/swiper-bundle.min.css">
-<link rel="stylesheet" type="text/css" href="/vendor/css/bootstrap.min.css">
-<link rel="stylesheet" type="text/css" href="src/icomoon/icomoon.css">
+  <link rel="stylesheet" type="text/css" href="/vendor/css/swiper-bundle.min.css">
+  <link rel="stylesheet" type="text/css" href="/vendor/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="src/icomoon/icomoon.css">
 
-<link rel="stylesheet" type="text/css" href="src/css/vendor.css">
-<link rel="stylesheet" type="text/css" href="src/css/style.css">
+  <link rel="stylesheet" type="text/css" href="src/css/vendor.css">
+  <link rel="stylesheet" type="text/css" href="src/css/style.css">
 
-<link rel="preconnect" href="https://fonts.googleapis.com/">
-<link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
-<link
-  href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;600;700&amp;family=Jost:wght@400;600;700&amp;display=swap"
-  rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com/">
+  <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;600;700&amp;family=Jost:wght@400;600;700&amp;display=swap"
+    rel="stylesheet">
 
 </head>
 
@@ -113,35 +114,11 @@
           <span class="badge bg-primary rounded-circle pt-2">3</span>
         </h4>
 
-        <ul class="list-group mb-4">
-          <li class="list-group-item d-flex justify-content-between lh-sm">
-            <div>
-              <h6 class="my-0">Grey Hoodie</h6>
-              <small class="text-body-secondary">Brief description</small>
-            </div>
-            <span class="text-body-secondary">$120</span>
-          </li>
-          <li class="list-group-item d-flex justify-content-between lh-sm">
-            <div>
-              <h6 class="my-0">Graphic T-Shirt</h6>
-              <small class="text-body-secondary">Brief description</small>
-            </div>
-            <span class="text-body-secondary">$80</span>
-          </li>
-          <li class="list-group-item d-flex justify-content-between lh-sm">
-            <div>
-              <h6 class="my-0">Black T-Shirt</h6>
-              <small class="text-body-secondary">Brief description</small>
-            </div>
-            <span class="text-body-secondary">$50</span>
-          </li>
-          <li class="list-group-item d-flex justify-content-between">
-            <span class="fw-bold">Total (USD)</span>
-            <strong>$250</strong>
-          </li>
+        <ul class="list-group mb-4" id="offcanvas-cart-items">
+          <!-- JS sẽ tự sinh nội dung vào đây -->
         </ul>
 
-        <button class="w-100 btn btn-dark" type="submit">Continue to checkout</button>
+        <button id="btn-continue-checkout" class="w-100 btn btn-dark" type="button">Continue to checkout</button>
       </div>
     </div>
   </div>
@@ -237,7 +214,8 @@
               <a href="#" class="nav-link mx-2">Hoodies</a>
             </li>
             <li class="nav-item">
-              <a href="https://templatesjungle.gumroad.com/l/uniclub-t-shirt-bootstrap5-eCommerce-website-template" class="nav-link mx-2" target="_blank">GET PRO</a>
+              <a href="https://templatesjungle.gumroad.com/l/uniclub-t-shirt-bootstrap5-eCommerce-website-template"
+                class="nav-link mx-2" target="_blank">GET PRO</a>
             </li>
           </ul>
 
@@ -377,13 +355,18 @@
             <div class="button-wrap row g-2">
               <div class="col-md-6"><button class="btn btn-outline-dark p-3 w-100">Update Cart</button>
               </div>
-              <div class="col-md-6"><button class="btn btn-outline-dark p-3 w-100">Continue Shop</button></div>
-              <div class="col-md-12 mt-3"><a href="checkout.html" class="btn btn-dark p-3 w-100">Proceed to checkout</a>
+              <div class="col-md-6">
+                <button id="btn-continue-shop" class="btn btn-outline-dark p-3 w-100">Continue Shop</button>
+              </div>
+              <div class="col-md-12 mt-3">
+                <!-- Bỏ href="checkout.html" thay bằng href="#" và thêm id="btn-proceed-checkout" -->
+                <a id="btn-proceed-checkout" href="#" class="btn btn-dark p-3 w-100">Proceed to checkout</a>
               </div>
             </div>
           </div>
         </div>
       </div>
+    </div>
     </div>
   </section>
 
@@ -542,4 +525,5 @@
 <script src="/js/cart.js"></script>
 
 <!-- Mirrored from demo.templatesjungle.com/uniclub/cart.html by HTTrack Website Copier/3.x [XR&CO'2014], Wed, 21 Feb 2024 03:11:34 GMT -->
+
 </html>
