@@ -1,17 +1,19 @@
 $(document).ready(function () {
-  alert("Hello, welcome to Uniclub!"); // Display a welcome alert when the document is ready
+    alert("Hello, welcome to Uniclub!"); // Display a welcome alert when the document is ready
 
-  var linkBE = "http://localhost:8080"
-  var pageNumber = 0
-  var cart = []
-  //mỗi khi reload file sẽ đọc lại tài liệu(document) từ đầu khiến mảng cart [] sẽ set lại về null khiến giỏ hàng sẽ bị rỗng, 
-  // vì vậy phải gọi lại mảng cart đã lưu trong localStorage
-  //mảng này là mảng string JSON
-  var cartString = localStorage.getItem('cart')
-  if(cartString !=null){ //ktra mang phải khác null, nếu null thì vẫn giữ nguyên
-    //đưa vào mảng cart những phần tử đã lưu trong localStorage
-    cart = JSON.parse(cartString) // String JSON → object JavaScript
-  }
+    var linkBE = "http://localhost:8081"
+    var page = 0
+    var isLastPage = false
+    var cart = []
+
+    //mỗi khi reload file sẽ đọc lại tài liệu(document) từ đầu khiến mảng cart [] sẽ set lại về null khiến giỏ hàng sẽ bị rỗng,
+    // vì vậy phải gọi lại mảng cart đã lưu trong localStorage
+    //mảng này là mảng string JSON
+    var cartString = localStorage.getItem('cart')
+    if (cartString != null) { //ktra mang phải khác null, nếu null thì vẫn giữ nguyên
+        //đưa vào mảng cart những phần tử đã lưu trong localStorage
+        cart = JSON.parse(cartString) // String JSON → object JavaScript
+    }
 
     if (!isLastPage) {
         getProduct(page);
