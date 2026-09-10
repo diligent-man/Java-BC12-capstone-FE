@@ -76,11 +76,6 @@ $(document).ready(function () {
                     var data = result.data.content;
                     var isLastPage = result.data.lastPage;
 
-                    if (isLastPage) {
-                        $('#view-more-product').prop('disabled', true).hide();
-                        return;
-                    }
-
                     var html = ''
                     for (let i = 0; i < data.length; i++) {
                         var item = data[i];
@@ -113,6 +108,10 @@ $(document).ready(function () {
                           </div>`
                     }
                     $('#container-product').append(html);
+
+                    if (isLastPage) {
+                        $('#view-more-product').prop('disabled', true).hide();
+                    }
                 }
             )
     }
