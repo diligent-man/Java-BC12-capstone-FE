@@ -2,38 +2,40 @@ $(document).ready(function () {
     $('#btn-login').click(function (e) {
         e.preventDefault(); // Ngăn trang bị reload
 
-        var email = $('#lg-email').val();
-        var password = $('#lg-password').val();
+        var email      = $('#lg-email').val();
+        var password   = $('#lg-password').val();
+        var rememberMe = $('#remember-me').is(':checked'); // Đọc trạng thái checkbox Remember Me
 
         $.ajax({
             url: 'http://localhost:8081/auth/login',
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify({
-                email: email,
-                password: password
+                email:      email,
+                password:   password,
+                rememberMe: rememberMe  // Gửi lên Backend để tính TTL
             })
         })
         .done(function (result) {
             console.log('Đăng nhập thành công:', result);
-            // 1. Lưu token vào localStorage (lấy accessToken trả về từ Backend)
+
+            // 1. Lưu token vào localStorage
             var token = (result.data && result.data.accessToken) ? result.data.accessToken : result.data;
             localStorage.setItem('token', token);
+
             // 2. Đọc tham số "redirect" trên thanh địa chỉ URL (nếu có)
-            var urlParams = new URLSearchParams(window.location.search);
+            var urlParams   = new URLSearchParams(window.location.search);
             var redirectUrl = urlParams.get('redirect');
             if (redirectUrl) {
-                // Nếu có trang chỉ định (ví dụ cart.html) thì chuyển về trang đó
                 window.location.href = redirectUrl;
             } else {
-                // Ngược lại, nếu đăng nhập bình thường thì về trang chủ
                 window.location.href = 'index.html';
             }
         })
         .fail(function (xhr) {
             var res = xhr.responseJSON;
-            // Backend trả về { code: "403", status: "Tài khoản bị khóa..." }
-            var errorMsg = (res && res.status)
+            // Backend trả về { code: "4xx", status: "Tài khoản bị khóa..." }
+            var errorMsg = (res && res.status) ? res.status : 'Đăng nhập thất bại, vui lòng thử lại!';
 
             // Hiển thị thông báo lỗi lên giao diện
             $('#login-alert').removeClass('d-none').text(errorMsg);
