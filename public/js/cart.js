@@ -38,7 +38,7 @@ $(document).ready(function () {
         window.location.href = 'shop.html';
     });
 
-        // === GẮN SỰ KIỆN CHO CẢ 2 NÚT THANH TOÁN ===
+    // === GẮN SỰ KIỆN CHO CẢ 2 NÚT THANH TOÁN ===
     // Nút "Proceed to checkout" ở bảng Cart Total
     $('#btn-proceed-checkout').click(handleCheckout);
     // Nút "Continue to checkout" ở popup Your Cart bên phải
@@ -92,17 +92,40 @@ $(document).ready(function () {
     // === HÀM KIỂM TRA ĐĂNG NHẬP VÀ ĐIỀU HƯỚNG CHECKOUT ===
     function handleCheckout(e) {
         e.preventDefault();
-        // Kiểm tra xem đã có token trong localStorage chưa
+        // Kiểm tra xem đã có token trong localStorage chưa -> nếu chưa có nghĩa là chưa đăng nhập lần nào
         var token = localStorage.getItem('token');
         if (!token) {
             // CHƯA ĐĂNG NHẬP:
             alert("Bạn cần đăng nhập trước khi thanh toán!");
             // Chuyển sang trang account.html, kèm tham số redirect=cart.html để login xong tự quay lại
             window.location.href = 'account.html?redirect=cart.html';
-        } else {
-            // ĐÃ ĐĂNG NHẬP: Cho phép sang trang checkout
-            window.location.href = 'checkout.html';
+            return;
         }
+
+        // nếu có token thì tiếp tục kiểm tra session Redis còn sống hay không
+        $.ajax({
+            url: linkBE + '/auth/check-session',
+            type: 'GET',
+            headers: {
+                'Authorization': 'Bearer ' + token
+            }
+        })
+            .done(function () {
+                // Session còn sống -> cho vào checkout
+                window.location.href = 'checkout.html';
+            })
+            .fail(function (xhr) {
+                if (xhr.status === 401) {
+                    // Session đã hết hạn trên Redis
+                    localStorage.removeItem('token'); // Dọn token rác
+                    alert("Phiên đăng nhập đã kết thúc, vui lòng đăng nhập lại!");
+                    window.location.href = 'account.html?redirect=cart.html';
+                } else {
+                    alert("Có lỗi xảy ra, vui lòng thử lại!");
+                }
+            });
+
+
     }
 
     // === HÀM VẼ TOÀN BỘ GIỎ HÀNG ===
