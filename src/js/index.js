@@ -22,35 +22,14 @@ $(document).ready(function () {
 
 
     $('#container-product').on('click', '.btn-cart', function () {
-        var strJsonItem = $(this).attr("data");
-        var item = JSON.parse(strJsonItem);
-
-        var isExist = false
-        for (let i = 0; i < cart.length; i++) {
-            if (cart[i].name === item.name) {
-                cart[i].quantity += 1
-                isExist = true
-            }
-        }
-        if (isExist === false) {
-            item.quantity = 1
-            cart.push(item);
-
-        }
-
-        var cartString = JSON.stringify(cart);
-        localStorage.setItem("cart", cartString);
-
-        updateCartBadge();
-        updateOffcanvasCart();
-
-        alert("Đã thêm sản phẩm vào giỏ hàng thành công!");
+        var item = JSON.parse($(this).attr("data"));
+        addToCart(item);
     })
 
     function getProduct(page) {
         $.ajax({
             method: "GET",
-            url: `${API_URL}/product/paging?page=${page}&size=5`,
+            url: `${API_URL}/product/paging?page=${page}&size=8`,
         })
             .done(
                 function (result) {

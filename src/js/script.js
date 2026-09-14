@@ -71,7 +71,9 @@ import {API_URL} from "./config";
     window.updateCartBadge = function () {
         var cartString = localStorage.getItem('cart');
         var cart = cartString ? JSON.parse(cartString) : [];
-        var count = cart.reduce(function (sum, item) { return sum + (item.quantity || 1); }, 0);
+        var count = cart.reduce(function (sum, item) {
+            return sum + (item.quantity || 1);
+        }, 0);
         $('.badge.rounded-circle.bg-primary').text(count.toString().padStart(2, '0'));
     };
 
@@ -115,6 +117,29 @@ import {API_URL} from "./config";
         $('#offcanvas-cart-count').text(cart.length);
     };
 
+    window.addToCart = function (item) {
+        var cartString = localStorage.getItem('cart');
+        var cart = cartString ? JSON.parse(cartString) : [];
+
+        var isExist = false;
+        for (let i = 0; i < cart.length; i++) {
+            if (cart[i].name === item.name) {
+                cart[i].quantity += 1;
+                isExist = true;
+            }
+        }
+        if (isExist === false) {
+            item.quantity = 1;
+            cart.push(item);
+        }
+
+        localStorage.setItem('cart', JSON.stringify(cart));
+
+        updateCartBadge();
+        updateOffcanvasCart();
+
+        alert('Đã thêm sản phẩm vào giỏ hàng thành công!');
+    };
 
     // document ready
     $(document).ready(function () {

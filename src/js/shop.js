@@ -89,31 +89,10 @@ $(document).ready(function () {
 
     // === SỰ KIỆN CLICK NÚT ADD TO CART Ở TRANG SHOP ===
     $('#shop-product-container').on('click', '.btn-cart', function () {
-        var strJsonItem = $(this).attr("data");
-        var item = JSON.parse(strJsonItem);
-        var isExist = false;
-        // Kiểm tra xem sản phẩm đã có trong giỏ chưa
-        for (let i = 0; i < cart.length; i++) {
-            if (cart[i].name === item.name) {
-                cart[i].quantity += 1;
-                isExist = true;
-            }
-        }
-
-        // Nếu chưa có thì thêm mới
-        if (isExist === false) {
-            item.quantity = 1;
-            cart.push(item);
-        }
-        // Lưu lại vào localStorage
-        localStorage.setItem("cart", JSON.stringify(cart));
-        updateOffcanvasCart(); // ← THÊM DÒNG NÀY
-        console.log("Đã thêm vào giỏ: ", item);
-        alert("Đã thêm sản phẩm vào giỏ hàng thành công!"); // Bạn có thể dùng thư viện toast hoặc alert
+        var item = JSON.parse($(this).attr("data"));
+        addToCart(item);
     });
 
-    // Tải trang đầu tiên khi mở shop
-    getShopProduct(currentPage);
 
     // === SỰ KIỆN NÚT TRANG TRƯỚC ===
     $('#btn-prev-page').click(function (e) {
@@ -140,44 +119,8 @@ $(document).ready(function () {
         getShopProduct(currentPage);
     });
 
-    // === CẬP NHẬT OFFCANVAS CART KHI MỞ ===
-    updateOffcanvasCart(); // Cập nhật lần đầu
-
-
-    // HÀM UPDATE OFFCANVAS CART (GỌI KHI MỞ OFFCANVAS)
-    function updateOffcanvasCart() {
-        var cart = [];
-        var cartString = localStorage.getItem('cart');
-        if (cartString != null) {
-            cart = JSON.parse(cartString);
-        }
-
-        var html = '';
-        var totalPrice = 0;
-
-        for (var i = 0; i < cart.length; i++) {
-            var item = cart[i];
-            var subtotal = item.price * item.quantity;
-            totalPrice += subtotal;
-
-            html += '<li class="list-group-item d-flex justify-content-between lh-sm">' +
-                '  <div>' +
-                '    <h6 class="my-0">' + item.name + '</h6>' +
-                '    <small class="text-body-secondary">SL: ' + item.quantity + '</small>' +
-                '  </div>' +
-                '  <span class="text-body-secondary">$' + subtotal.toFixed(2) + '</span>' +
-                '</li>';
-        }
-
-        // Thêm dòng Total
-        html += '<li class="list-group-item d-flex justify-content-between">' +
-            '  <span class="fw-bold">Total (USD)</span>' +
-            '  <strong>$' + totalPrice.toFixed(2) + '</strong>' +
-            '</li>';
-
-        $('#offcanvas-cart-items').html(html);
-        $('#offcanvas-cart-count').text(cart.length);
-    }
+    getShopProduct(currentPage);
+    updateOffcanvasCart();
 
     function buildPriceRangeParams(priceRanges) {
         var params = new URLSearchParams();
@@ -189,7 +132,6 @@ $(document).ready(function () {
         });
         return params.toString();
     }
-
 
     function getCategory() {
         $.ajax({
@@ -217,7 +159,6 @@ $(document).ready(function () {
             });
     }
 
-
     function getTag() {
         $.ajax({
             method: "GET",
@@ -243,7 +184,6 @@ $(document).ready(function () {
                 console.error("Failed to load tags:", err);
             });
     }
-
 
     function getBrand() {
         $.ajax({
