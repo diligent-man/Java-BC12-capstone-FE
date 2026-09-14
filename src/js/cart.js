@@ -1,5 +1,6 @@
+import { API_URL } from './config';
+
 $(document).ready(function () {
-    var linkBE = "http://localhost:8081";
     var cart = [];
 
     // ===  ĐỌC GIỎ HÀNG TỪ LOCALSTORAGE ===
@@ -51,44 +52,6 @@ $(document).ready(function () {
         renderCart();
     }
 
-    // === CẬP NHẬT OFFCANVAS CART KHI MỞ ===
-    updateOffcanvasCart(); // Cập nhật lần đầu
-
-    // HÀM UPDATE OFFCANVAS CART (GỌI KHI MỞ OFFCANVAS)
-    function updateOffcanvasCart() {
-        var cart = [];
-        var cartString = localStorage.getItem('cart');
-        if (cartString != null) {
-            cart = JSON.parse(cartString);
-        }
-
-        var html = '';
-        var totalPrice = 0;
-
-        for (var i = 0; i < cart.length; i++) {
-            var item = cart[i];
-            var subtotal = item.price * item.quantity;
-            totalPrice += subtotal;
-
-            html += '<li class="list-group-item d-flex justify-content-between lh-sm">' +
-                '  <div>' +
-                '    <h6 class="my-0">' + item.name + '</h6>' +
-                '    <small class="text-body-secondary">SL: ' + item.quantity + '</small>' +
-                '  </div>' +
-                '  <span class="text-body-secondary">$' + subtotal.toFixed(2) + '</span>' +
-                '</li>';
-        }
-
-        // Thêm dòng Total
-        html += '<li class="list-group-item d-flex justify-content-between">' +
-            '  <span class="fw-bold">Total (USD)</span>' +
-            '  <strong>$' + totalPrice.toFixed(2) + '</strong>' +
-            '</li>';
-
-        $('#offcanvas-cart-items').html(html);
-        $('#offcanvas-cart-count').text(cart.length);
-    }
-
     // === HÀM KIỂM TRA ĐĂNG NHẬP VÀ ĐIỀU HƯỚNG CHECKOUT ===
     function handleCheckout(e) {
         e.preventDefault();
@@ -117,8 +80,9 @@ $(document).ready(function () {
 
             // Kiểm tra hình ảnh null
             var imageSrc = "/images/no-image.png";
+
             if (item.image != null && item.image.length > 0) {
-                imageSrc = linkBE + "/file/" + item.image;
+                imageSrc = API_URL + "/file/product" + item.image;
             }
 
             html += '<tr>' +
