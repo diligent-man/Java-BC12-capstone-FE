@@ -14,6 +14,7 @@ $(document).ready(function () {
 
     getProduct(productName);
 
+
     $('#product-add-to-cart').on('click', function (e) {
         e.preventDefault();
 
