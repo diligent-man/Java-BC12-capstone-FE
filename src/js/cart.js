@@ -1,35 +1,37 @@
-import { API_URL } from './config';
+import {API_URL} from './config';
 
 $(document).ready(function () {
     var cart = [];
 
-    // ===  ĐỌC GIỎ HÀNG TỪ LOCALSTORAGE ===
+    // === ĐỌC GIỎ HÀNG TỪ LOCALSTORAGE ===
     var cartString = localStorage.getItem('cart');
     if (cartString != null) {
         cart = JSON.parse(cartString);
     }
 
-    // ===  VẼ GIỎ HÀNG LẦN ĐẦU ===
+    // === VẼ GIỎ HÀNG LẦN ĐẦU ===
     renderCart();
 
     $('#cart-items-container').on('click', '.quantity-right-plus', function () {
-        var index = $(this).attr('data-id'); // Lấy vị trí phần tử
-        cart[index].quantity += 1;              // Tăng số lượng trực tiếp
+        var index = $(this).attr('data-id');
+        cart[index].quantity += 1;
         saveAndRender();
     });
-    // ===  SỰ KIỆN NÚT GIẢM SỐ LƯỢNG (-) ===
+
+    // === SỰ KIỆN NÚT GIẢM SỐ LƯỢNG (-) ===
     $('#cart-items-container').on('click', '.quantity-left-minus', function () {
         var index = $(this).attr('data-id');
         if (cart[index].quantity > 1) {
-            cart[index].quantity -= 1;          // Giảm số lượng
+            cart[index].quantity -= 1;
             saveAndRender();
         }
     });
+
     // === SỰ KIỆN NÚT XÓA SẢN PHẨM ===
     $('#cart-items-container').on('click', '.btn-remove', function (e) {
         e.preventDefault();
         var index = $(this).attr('data-id');
-        cart.splice(index, 1);                  // Xóa phần tử tại vị trí index khỏi mảng
+        cart.splice(index, 1);
         saveAndRender();
     });
 
@@ -40,55 +42,58 @@ $(document).ready(function () {
     });
 
     // === GẮN SỰ KIỆN CHO CẢ 2 NÚT THANH TOÁN ===
-    // Nút "Proceed to checkout" ở bảng Cart Total
     $('#btn-proceed-checkout').click(handleCheckout);
-    // Nút "Continue to checkout" ở popup Your Cart bên phải
     $('#btn-continue-checkout').click(handleCheckout);
-
 
     // === HÀM LƯU VÀO LOCALSTORAGE VÀ VẼ LẠI ===
     function saveAndRender() {
         localStorage.setItem('cart', JSON.stringify(cart));
         renderCart();
+
+        // Keep nav badge + offcanvas cart drawer in sync with this page's cart table
+        if (typeof window.updateCartBadge === 'function') {
+            window.updateCartBadge();
+        }
+        if (typeof window.updateOffcanvasCart === 'function') {
+            window.updateOffcanvasCart();
+        }
     }
 
     // === HÀM KIỂM TRA ĐĂNG NHẬP VÀ ĐIỀU HƯỚNG CHECKOUT ===
     function handleCheckout(e) {
         e.preventDefault();
-        // Kiểm tra xem đã có token trong localStorage chưa -> nếu chưa có nghĩa là chưa đăng nhập lần nào
+
+        if (cart.length === 0) {
+            alert("Giỏ hàng của bạn đang trống!");
+            return;
+        }
+
         var token = localStorage.getItem('token');
         if (!token) {
-            // CHƯA ĐĂNG NHẬP:
             alert("Bạn cần đăng nhập trước khi thanh toán!");
-            // Chuyển sang trang account.html, kèm tham số redirect=cart.html để login xong tự quay lại
             window.location.href = 'account.html?redirect=cart.html';
             return;
         }
 
-        // nếu có token thì tiếp tục kiểm tra session Redis còn sống hay không
         $.ajax({
-            url: linkBE + '/auth/check-session',
+            url: API_URL + '/auth/check-session',
             type: 'GET',
             headers: {
                 'Authorization': 'Bearer ' + token
             }
         })
             .done(function () {
-                // Session còn sống -> cho vào checkout
                 window.location.href = 'checkout.html';
             })
             .fail(function (xhr) {
                 if (xhr.status === 401) {
-                    // Session đã hết hạn trên Redis
-                    localStorage.removeItem('token'); // Dọn token rác
+                    localStorage.removeItem('token');
                     alert("Phiên đăng nhập đã kết thúc, vui lòng đăng nhập lại!");
                     window.location.href = 'account.html?redirect=cart.html';
                 } else {
                     alert("Có lỗi xảy ra, vui lòng thử lại!");
                 }
             });
-
-
     }
 
     // === HÀM VẼ TOÀN BỘ GIỎ HÀNG ===
@@ -102,6 +107,7 @@ $(document).ready(function () {
             totalPrice += subtotal;
 
             var imageSrc = `${API_URL}/file/product/${item.image}`;
+            var variantLabel = [item.color, item.size].filter(Boolean).join(' / ');
 
             html += '<tr>' +
                 '<td scope="row" class="py-4">' +
@@ -116,6 +122,7 @@ $(document).ready(function () {
                 '        <h5 class="card-title">' +
                 '          <a href="#" class="text-decoration-none">' + item.name + '</a>' +
                 '        </h5>' +
+                (variantLabel ? '        <p class="text-muted mb-0 small">' + variantLabel + '</p>' : '') +
                 '        <p class="text-muted mb-0">Đơn giá: $' + item.price + '</p>' +
                 '      </div>' +
                 '    </div>' +
@@ -151,15 +158,12 @@ $(document).ready(function () {
                 '</tr>';
         }
 
-        // Nếu giỏ hàng trống
         if (cart.length === 0) {
             html = '<tr><td colspan="4" class="text-center py-5">Giỏ hàng của bạn đang trống!</td></tr>';
         }
 
-        // Đổ HTML vào bảng
         $('#cart-items-container').html(html);
 
-        // Cập nhật Subtotal và Total
         $('#cart-subtotal').text(totalPrice.toFixed(2));
         $('#cart-total').text(totalPrice.toFixed(2));
     }

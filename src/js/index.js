@@ -2,15 +2,7 @@ import {API_URL} from './config';
 
 $(document).ready(function () {
     var page = 0
-    var cart = []
     var isLastPage = false
-    var cartString = localStorage.getItem('cart')
-
-    if (cartString != null) {
-        cart = JSON.parse(cartString)
-    }
-    updateCartBadge();
-    updateOffcanvasCart();
 
     if (!isLastPage) {
         getProduct(page);
@@ -20,11 +12,13 @@ $(document).ready(function () {
         });
     }
 
+    // $('#container-product').on('click', '.btn-cart', function () {
+    //     var item = JSON.parse($(this).attr("data-item"));
+    //     addToCart(item);
+    // })
 
-    $('#container-product').on('click', '.btn-cart', function () {
-        var item = JSON.parse($(this).attr("data"));
-        addToCart(item);
-    })
+    // updateCartBadge();
+    // updateOffcanvasCart();
 
     function getProduct(page) {
         $.ajax({
@@ -49,10 +43,10 @@ $(document).ready(function () {
                               
                               <div class="cart-concern">
                                 <div class="cart-button d-flex justify-content-between align-items-center">
-                                  <span href="#" data-item='${stringJSON}' class=" btn-cart btn-wrap cart-link d-flex align-items-center text-capitalize fs-6 ">add to cart <i
+                                  <span href="#" onclick="goToSingleProduct(this)" data-item='${stringJSON}' class="btn-cart btn-wrap cart-link d-flex align-items-center text-capitalize fs-6 ">see detail<i
                                       class="icon icon-arrow-io pe-1"></i>
                                   </span>
-                                  <a href="single-product.html" class="view-btn">
+                                  <a href="single-product.html?name=${encodeURIComponent(item.name)}" class="view-btn">
                                     <i class="icon icon-screen-full"></i>
                                   </a>
                                   <a href="#" class="wishlist-btn">
@@ -63,7 +57,7 @@ $(document).ready(function () {
                               
                               <div class="product-detail d-flex justify-content-between align-items-center mt-4">
                                 <h4 class="product-title mb-0">
-                                  <a href="single-product.html">${item.name}</a>
+                                  <a href="single-product.html?name=${encodeURIComponent(item.name)}">${item.name}</a>
                                 </h4>
                                 <p class="m-0 fs-5 fw-normal">${item.price}</p>
                               </div>

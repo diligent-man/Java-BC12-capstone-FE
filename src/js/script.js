@@ -1,4 +1,7 @@
+import Swiper from "swiper";
+
 import {API_URL} from "./config";
+
 
 (function ($) {
 
@@ -68,6 +71,11 @@ import {API_URL} from "./config";
 
     }
 
+    window.goToSingleProduct = function (el) {
+        const item = JSON.parse(el.getAttribute('data-item'));
+        window.location.href = `single-product.html?name=${encodeURIComponent(item.name)}`;
+    };
+
     window.updateCartBadge = function () {
         var cartString = localStorage.getItem('cart');
         var cart = cartString ? JSON.parse(cartString) : [];
@@ -93,6 +101,7 @@ import {API_URL} from "./config";
             totalPrice += subtotal;
 
             var imageSrc = `${API_URL}/file/product/${item.image}`;
+            var variantLabel = [item.color, item.size].filter(Boolean).join(' / ');
 
             html += '<li class="list-group-item d-flex justify-content-between lh-sm">' +
                 '  <div class="d-flex align-items-center">' +
@@ -100,7 +109,7 @@ import {API_URL} from "./config";
                 '         style="width:48px;height:48px;object-fit:cover;flex-shrink:0;background:#eee;border:1px solid #ddd;" ' +
                 '         class="me-2 rounded">' +
                 '    <div>' +
-                '      <h6 class="my-0">' + item.name + '</h6>' +
+                '      <h6 class="my-0">' + item.name + (variantLabel ? ' (' + variantLabel + ')' : '') + '</h6>' +
                 '      <small class="text-body-secondary">SL: ' + item.quantity + '</small>' +
                 '    </div>' +
                 '  </div>' +
@@ -118,19 +127,39 @@ import {API_URL} from "./config";
     };
 
     window.addToCart = function (item) {
+        console.log(item.quantity);
+
+        if (!item.quantity || item.quantity <= 0) {
+            alert('Vui lòng chọn số lượng sản phẩm trước khi thêm vào giỏ hàng.');
+            return;
+        }
         var cartString = localStorage.getItem('cart');
         var cart = cartString ? JSON.parse(cartString) : [];
 
-        var isExist = false;
-        for (let i = 0; i < cart.length; i++) {
-            if (cart[i].name === item.name) {
-                cart[i].quantity += 1;
-                isExist = true;
+        var existing = cart.find(function (c) {
+            return c.sku === item.sku;
+        });
+
+        var currentCartQty = existing ? (existing.quantity || 0) : 0;
+        var newTotalQty = currentCartQty + item.quantity;
+
+        if (item.maxQuantity != null && newTotalQty > item.maxQuantity) {
+            var canAdd = item.maxQuantity - currentCartQty;
+
+            if (canAdd <= 0) {
+                alert(`Bạn đã có ${currentCartQty} sản phẩm này trong giỏ hàng, đã đạt số lượng tồn kho tối đa.`);
+            } else {
+                alert(`Chỉ còn ${item.maxQuantity} sản phẩm trong kho. Bạn chỉ có thể thêm tối đa ${canAdd} sản phẩm nữa.`);
             }
+            return;
         }
-        if (isExist === false) {
-            item.quantity = 1;
-            cart.push(item);
+
+        if (existing) {
+            existing.quantity = newTotalQty;
+        } else {
+            var itemToStore = Object.assign({}, item);
+            delete itemToStore.maxQuantity;
+            cart.push(itemToStore);
         }
 
         localStorage.setItem('cart', JSON.stringify(cart));
@@ -141,27 +170,28 @@ import {API_URL} from "./config";
         alert('Đã thêm sản phẩm vào giỏ hàng thành công!');
     };
 
+    window.productThumbSwiper = new Swiper(".product-thumbnail-slider", {
+        loop: true,
+        slidesPerView: 3,
+        autoplay: true,
+        direction: "vertical",
+        spaceBetween: 30,
+        watchSlidesProgress: true
+    });
+
+    window.productLargeSwiper = new Swiper(".product-large-slider", {
+        loop: true,
+        slidesPerView: 1,
+        autoplay: true,
+        effect: 'fade',
+        fadeEffect: {crossFade: true},
+        thumbs: {
+            swiper: window.productThumbSwiper,
+        },
+    });
+
     // document ready
     $(document).ready(function () {
-        // product single page
-        var thumb_slider = new Swiper(".product-thumbnail-slider", {
-            loop: true,
-            slidesPerView: 3,
-            autoplay: true,
-            direction: "vertical",
-            spaceBetween: 30,
-        });
-
-        var large_slider = new Swiper(".product-large-slider", {
-            loop: true,
-            slidesPerView: 1,
-            autoplay: true,
-            effect: 'fade',
-            thumbs: {
-                swiper: thumb_slider,
-            },
-        });
-
         window.addEventListener("load", (event) => {
 
             var $grid = $('.entry-container').isotope({

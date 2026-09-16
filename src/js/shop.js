@@ -89,7 +89,7 @@ $(document).ready(function () {
 
     // === SỰ KIỆN CLICK NÚT ADD TO CART Ở TRANG SHOP ===
     $('#shop-product-container').on('click', '.btn-cart', function () {
-        var item = JSON.parse($(this).attr("data"));
+        var item = JSON.parse($(this).attr("data-item"));
         addToCart(item);
     });
 
@@ -257,10 +257,10 @@ $(document).ready(function () {
                                 </div>
                                 <div class="cart-concern">
                                     <div class="cart-button d-flex justify-content-between align-items-center">
-                                        <span class="btn-cart btn-wrap cart-link d-flex align-items-center text-capitalize fs-6" data='${stringJSON}'>
+                                        <span class="btn-cart btn-wrap cart-link d-flex align-items-center text-capitalize fs-6" data-item='${stringJSON}'>
                                             add to cart <i class="icon icon-arrow-io pe-1"></i>
                                         </span>
-                                        <a href="single-product.html" class="view-btn">
+                                        <a href="single-product.html?name=${encodeURIComponent(item.name)}" class="view-btn">
                                             <i class="icon icon-screen-full"></i>
                                         </a>
                                         <a href="#" class="wishlist-btn">
@@ -270,7 +270,7 @@ $(document).ready(function () {
                                 </div>
                                 <div class="product-detail d-flex justify-content-between align-items-center mt-4">
                                     <h4 class="product-title mb-0">
-                                        <a href="single-product.html">${item.name}</a>
+                                        <a href="single-product.html?name=${encodeURIComponent(item.name)}">${item.name}</a>
                                     </h4>
                                     <p class="m-0 fs-5 fw-normal">$${item.price}</p>
                                 </div>
