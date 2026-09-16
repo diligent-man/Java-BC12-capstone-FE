@@ -12,14 +12,6 @@ $(document).ready(function () {
         });
     }
 
-    // $('#container-product').on('click', '.btn-cart', function () {
-    //     var item = JSON.parse($(this).attr("data-item"));
-    //     addToCart(item);
-    // })
-
-    // updateCartBadge();
-    // updateOffcanvasCart();
-
     function getProduct(page) {
         $.ajax({
             method: "GET",
@@ -37,18 +29,24 @@ $(document).ready(function () {
 
                         html += `<div class="col-md-6 col-lg-3 my-4">
                             <div class="product-item">
-                              <div class="image-holder" style="width: 100%; height: 100%;">
-                                    <img src="${API_URL}/file/product/${item.image}" alt="Books" class="product-image img-fluid">
+                              <div class="image-holder" style="width: 100%; height: 100%; aspect-ratio: 1 / 1; overflow: hidden;">
+                                    <img src="${API_URL}/file/product/${item.image}"
+                                         alt="Books"
+                                         class="product-image img-fluid"
+                                         style="width:100%; height:100%; object-fit: cover;"
+                                         >
                               </div>
                               
                               <div class="cart-concern">
                                 <div class="cart-button d-flex justify-content-between align-items-center">
-                                  <span href="#" onclick="goToSingleProduct(this)" data-item='${stringJSON}' class="btn-cart btn-wrap cart-link d-flex align-items-center text-capitalize fs-6 ">see detail<i
-                                      class="icon icon-arrow-io pe-1"></i>
+                                  <span href="#" onclick="goToSingleProduct(this)" data-item='${stringJSON}' class="btn-cart btn-wrap cart-link d-flex align-items-center text-capitalize fs-6 ">see detail
+                                    <i class="icon icon-arrow-io pe-1"></i>
                                   </span>
+                                  
                                   <a href="single-product.html?name=${encodeURIComponent(item.name)}" class="view-btn">
                                     <i class="icon icon-screen-full"></i>
                                   </a>
+                                  
                                   <a href="#" class="wishlist-btn">
                                     <i class="icon icon-heart"></i>
                                   </a>

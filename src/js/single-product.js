@@ -224,6 +224,11 @@ $(document).ready(function () {
         $('#product-categories').html(html);
     }
 
+    function renderBrand(brand) {
+        var html = `<li class="select-item"><a href="/shop.html?brand=${encodeURIComponent(brand)}">${brand}</a></li>`;
+        $('#product-brand').html(html);
+    }
+
     function renderTags(tags) {
         var tagList = tags && tags.size ? Array.from(tags) : (tags || []);
         var html = tagList.map(function (tag, i) {
@@ -240,12 +245,21 @@ $(document).ready(function () {
         var imgList = images && images.size ? Array.from(images) : (images && images.length ? images : []);
 
         var largeSlidesHtml = imgList.map(function (img) {
-            return `<div class="swiper-slide"><img src="${API_URL}/file/product/${img}" alt="${productName}" class="img-fluid"></div>`;
+            return `<div class="swiper-slide" style="aspect-ratio: 1 / 1; overflow: hidden;">
+                    <img src="${API_URL}/file/product/${img}" alt="${productName}"
+                         style="width: 100%; height: 100%; object-fit: cover; object-position: center;">
+                </div>`;
         }).join('');
         $('#product-large-images').html(largeSlidesHtml);
 
         var thumbSlidesHtml = imgList.map(function (img) {
-            return `<div class="swiper-slide"><img src="${API_URL}/file/product/${img}" alt="${productName}" class="thumb-image img-fluid"></div>`;
+            return `<div class="swiper-slide" style="aspect-ratio: 1 / 1; overflow: hidden;">
+                    <img src="${API_URL}/file/product/${img}"
+                         alt="${productName}"
+                         class="thumb-image img-fluid"
+                         style="width: 100%; height: 100%; object-fit: cover; object-position: center;"
+                    >
+                    </div>`;
         }).join('');
         $('#product-thumbnail-images').html(thumbSlidesHtml);
 
@@ -274,6 +288,7 @@ $(document).ready(function () {
         $('#v-pills-description').text(item.description || '');
         $('#v-pills-additional').text(item.information || '');
 
+        renderBrand(item.brand)
         renderColorOptions(item.variants, initialVariant);
         renderSizeOptions(item.variants, initialVariant);
         selectVariant(initialVariant);

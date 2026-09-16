@@ -20,6 +20,15 @@ $(document).ready(function () {
         sort: ""
     };
 
+    // --- Read category (and tag) from URL on page load ---
+    var urlParams = new URLSearchParams(window.location.search);
+    var brandFromUrl = urlParams.get('brand');
+    var categoryFromUrl = urlParams.get('category');
+    var tagFromUrl = urlParams.get('tag');
+
+    getCategory();
+    getTag();
+    getBrand();
 
     $(document).on('change', '.brand-checkbox', function () {
         filters.brands = $('#brand-list .brand-checkbox:checked').map(function () {
@@ -87,12 +96,6 @@ $(document).ready(function () {
         getShopProduct(currentPage);
     });
 
-    // === SỰ KIỆN CLICK NÚT ADD TO CART Ở TRANG SHOP ===
-    $('#shop-product-container').on('click', '.btn-cart', function () {
-        var item = JSON.parse($(this).attr("data-item"));
-        addToCart(item);
-    });
-
 
     // === SỰ KIỆN NÚT TRANG TRƯỚC ===
     $('#btn-prev-page').click(function (e) {
@@ -144,20 +147,28 @@ $(document).ready(function () {
 
                 for (let i = 0; i < data.length; i++) {
                     const category = data[i];
+                    var isChecked = categoryFromUrl && category.name === categoryFromUrl ? 'checked' : '';
                     html += `<li class="category-item">
                             <label class="fw-semibold">
-                                <input type="checkbox" class="category-checkbox" value="${category.name}">
+                                <input type="checkbox" class="category-checkbox" value="${category.name}" ${isChecked}>
                                 ${category.name}
                             </label>
                         </li>`;
                 }
 
                 $('#category-list').html(html);
+
+                // If a category came from the URL, apply it as a filter now that the checkbox exists
+                if (categoryFromUrl) {
+                    filters.categories = [categoryFromUrl];
+                    getShopProduct(0);
+                }
             })
             .fail(function (err) {
                 console.error("Failed to load categories:", err);
             });
     }
+
 
     function getTag() {
         $.ajax({
@@ -170,15 +181,21 @@ $(document).ready(function () {
 
                 for (let i = 0; i < data.length; i++) {
                     const tag = data[i];
+                    var isChecked = tagFromUrl && tag.name === tagFromUrl ? 'checked' : '';
                     html += `<li class="tags-item">
                             <label class="fw-semibold">
-                                <input type="checkbox" class="tag-checkbox" value="${tag.name}">
+                                <input type="checkbox" class="tag-checkbox" value="${tag.name}" ${isChecked}>
                                 ${tag.name}
                             </label>
                         </li>`;
                 }
 
                 $('#tag-list').html(html);
+
+                if (tagFromUrl) {
+                    filters.tags = [tagFromUrl];
+                    getShopProduct(0);
+                }
             })
             .fail(function (err) {
                 console.error("Failed to load tags:", err);
@@ -196,10 +213,12 @@ $(document).ready(function () {
 
                 for (let i = 0; i < data.length; i++) {
                     const brand = data[i];
+                    var isChecked = brandFromUrl && brand.name === brandFromUrl ? 'checked' : '';
+
                     html += `<li class="tags-item">
                             <label class="fw-semibold">
-                                <input type="checkbox" class="brand-checkbox" value="${brand.name}">
-                                ${brand.name}
+                                <input type="checkbox" class="brand-checkbox" value="${brand.name}" ${isChecked}>
+${brand.name}
                             </label>
                         </li>`;
                 }
@@ -245,7 +264,7 @@ $(document).ready(function () {
                 $('#showing-result').text(`Showing ${from}–${to} of ${totalElements} results`);
 
                 // --- Vẽ sản phẩm ---
-                $('#shop-product-container').html(''); // Xóa sản phẩm cũ
+                $('#shop-product-container').html('');
                 var html = '';
                 for (let i = 0; i < data.length; i++) {
                     var item = data[i];
@@ -257,12 +276,14 @@ $(document).ready(function () {
                                 </div>
                                 <div class="cart-concern">
                                     <div class="cart-button d-flex justify-content-between align-items-center">
-                                        <span class="btn-cart btn-wrap cart-link d-flex align-items-center text-capitalize fs-6" data-item='${stringJSON}'>
-                                            add to cart <i class="icon icon-arrow-io pe-1"></i>
+                                        <span href="#" onclick="goToSingleProduct(this)" data-item='${stringJSON}' class="btn-cart btn-wrap cart-link d-flex align-items-center text-capitalize fs-6 ">see detail
+                                          <i class="icon icon-arrow-io pe-1"></i>
                                         </span>
+                                        
                                         <a href="single-product.html?name=${encodeURIComponent(item.name)}" class="view-btn">
                                             <i class="icon icon-screen-full"></i>
                                         </a>
+                                        
                                         <a href="#" class="wishlist-btn">
                                             <i class="icon icon-heart"></i>
                                         </a>
@@ -300,6 +321,7 @@ $(document).ready(function () {
 
 
     $(document).ready(function () {
+        getBrand();
         getCategory();
         getTag();
         getBrand();

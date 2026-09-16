@@ -1,7 +1,4 @@
-import Swiper from "swiper";
-
 import {API_URL} from "./config";
-
 
 (function ($) {
 
@@ -171,12 +168,11 @@ import {API_URL} from "./config";
     };
 
     window.productThumbSwiper = new Swiper(".product-thumbnail-slider", {
-        loop: true,
+        loop: false,
         slidesPerView: 3,
-        autoplay: true,
         direction: "vertical",
         spaceBetween: 30,
-        watchSlidesProgress: true
+        autoplay: true
     });
 
     window.productLargeSwiper = new Swiper(".product-large-slider", {
