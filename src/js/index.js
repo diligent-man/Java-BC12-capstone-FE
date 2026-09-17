@@ -57,7 +57,7 @@ $(document).ready(function () {
                                 <h4 class="product-title mb-0">
                                   <a href="single-product.html?name=${encodeURIComponent(item.name)}">${item.name}</a>
                                 </h4>
-                                <p class="m-0 fs-5 fw-normal">${item.price}</p>
+                                <p class="m-0 fs-5 fw-normal">${item.price}$</p>
                               </div>
                             </div>
                           </div>`
