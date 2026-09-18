@@ -14,7 +14,6 @@ $(document).ready(function () {
 
     getProduct(productName);
 
-
     $('#product-add-to-cart').on('click', function (e) {
         e.preventDefault();
 
@@ -23,17 +22,15 @@ $(document).ready(function () {
             return;
         }
 
-        if (currentVariant.quantity <= 0) {
+        var alreadyInCart = getCartQtyForSku(currentVariant.sku);
+        var availableToAdd = Math.max(0, currentVariant.quantity - alreadyInCart);
+
+        if (availableToAdd <= 0) {
             alert('This variant is out of stock.');
             return;
         }
 
         var quantity = parseInt($('#quantity').val()) || 0;
-
-        if (quantity > currentVariant.quantity) {
-            alert(`Only ${currentVariant.quantity} in stock.`);
-            return;
-        }
 
         var imgList = currentVariant.images && currentVariant.images.size
             ? Array.from(currentVariant.images)
@@ -50,8 +47,10 @@ $(document).ready(function () {
             quantity: quantity,
             maxQuantity: currentVariant.quantity
         });
-    });
 
+        // Refresh displayed stock based on updated cart contents
+        selectVariant(currentVariant);
+    });
 
     // --- Click handlers: switching color or size picks the matching variant ---
     $(document).on('click', '#product-colors .select-item a', function (e) {
@@ -83,12 +82,12 @@ $(document).ready(function () {
         var current = parseInt($input.val(), 10);
         if (isNaN(current)) current = 0;
 
-        var max = currentVariant.quantity || 0;
+        var alreadyInCart = getCartQtyForSku(currentVariant.sku);
+        var max = Math.max(0, currentVariant.quantity - alreadyInCart);
 
         if (current < max) {
             $input.val(current + 1);
         }
-        // if current >= max, do nothing — simply don't increase
     });
 
     $(document).on('click', '.quantity-left-minus', function () {
@@ -101,6 +100,15 @@ $(document).ready(function () {
         }
         // floor is 1 — quantity can't go below 1 while stock is available
     });
+
+    function getCartQtyForSku(sku) {
+        var cartString = localStorage.getItem('cart');
+        var cart = cartString ? JSON.parse(cartString) : [];
+        var existing = cart.find(function (c) {
+            return c.sku === sku;
+        });
+        return existing ? (existing.quantity || 0) : 0;
+    }
 
     function switchVariant(target) {
         var match = currentProduct.variants.find(function (v) {
@@ -148,20 +156,21 @@ $(document).ready(function () {
     function selectVariant(variant) {
         currentVariant = variant;
 
+        var alreadyInCart = getCartQtyForSku(variant.sku);
+        var availableToAdd = Math.max(0, variant.quantity - alreadyInCart);
+
         $('#product-sku').text(variant.sku);
         $('#product-price').text('$' + Number(variant.price).toFixed(2));
         $('#product-stock').text(
-            variant.quantity != null ? `${variant.quantity} in stock` : 'Out of stock'
+            availableToAdd > 0 ? `${availableToAdd} in stock` : 'Out of stock'
         );
 
-        // Reset quantity input, capped to available stock (at least 1 if in stock)
-        $('#quantity').val(variant.quantity > 0 ? 1 : 0);
+        $('#quantity').val(availableToAdd > 0 ? 1 : 0);
 
         renderImages(variant.images, currentProduct.name);
         renderCategories(variant.categories);
         renderTags(variant.tags);
 
-        // Reflect active state on already-rendered color/size lists
         $('#product-colors .select-item a').removeClass('active')
             .filter(function () {
                 return $(this).text().trim() === variant.color;

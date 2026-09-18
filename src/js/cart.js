@@ -2,29 +2,51 @@ import {API_URL} from './config';
 
 $(document).ready(function () {
     var cart = [];
+    var currentVariant = null;
 
-    // === ĐỌC GIỎ HÀNG TỪ LOCALSTORAGE ===
     var cartString = localStorage.getItem('cart');
     if (cartString != null) {
         cart = JSON.parse(cartString);
     }
 
-    // === VẼ GIỎ HÀNG LẦN ĐẦU ===
     renderCart();
 
-    $('#cart-items-container').on('click', '.quantity-right-plus', function () {
+    $(document).on('click', '.quantity-right-plus', function () {
         var index = $(this).attr('data-id');
-        cart[index].quantity += 1;
-        saveAndRender();
+        var currentVariant = cart[index];
+
+        if (!currentVariant)
+            return;
+
+        var input = currentVariant.quantity;
+
+        var current = parseInt(input, 10);
+        if (isNaN(current)) current = 0;
+
+        var max = currentVariant.quantity || 0;
+
+        if (current < max) {
+            cart[index].quantity += 1;
+        }
+        renderCart();
     });
 
-    // === SỰ KIỆN NÚT GIẢM SỐ LƯỢNG (-) ===
-    $('#cart-items-container').on('click', '.quantity-left-minus', function () {
+    $(document).on('click', '.quantity-left-minus', function () {
         var index = $(this).attr('data-id');
-        if (cart[index].quantity > 1) {
-            cart[index].quantity -= 1;
-            saveAndRender();
+        var currentVariant = cart[index];
+
+        if (!currentVariant)
+            return;
+
+        var current = parseInt(currentVariant.quantity, 10);
+        if (isNaN(current)) current = 0;
+
+        var max = currentVariant.quantity || 0;
+
+        if (current < max) {
+            cart[index].quantity += 1;
         }
+        renderCart();
     });
 
     // === SỰ KIỆN NÚT XÓA SẢN PHẨM ===

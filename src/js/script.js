@@ -1,7 +1,6 @@
 import {API_URL} from "./config";
 
 (function ($) {
-
     "use strict";
 
     var initPreloader = function () {
@@ -10,7 +9,8 @@ import {API_URL} from "./config";
             $('body').removeClass('preloader-site');
         };
 
-        if (document.readyState === 'complete') { //Tự động kiểm tra nếu trang đã tải xong (document.readyState === 'complete') thì tắt màn hình loading ngay lập tức.
+        if (document.readyState === 'complete') {
+            //Tự động kiểm tra nếu trang đã tải xong (document.readyState === 'complete') thì tắt màn hình loading ngay lập tức.
             hidePreloader();
         } else {
             $(window).on('load', hidePreloader);
@@ -40,32 +40,6 @@ import {API_URL} from "./config";
             imageSize: 'contain',
             loop: true,
         })
-    }
-
-
-    var initProductQty = function () {
-
-        $('.product-qty').each(function () {
-
-            var $el_product = $(this);
-            var quantity = 0;
-
-            $el_product.find('.quantity-right-plus').click(function (e) {
-                e.preventDefault();
-                var quantity = parseInt($el_product.find('#quantity').val());
-                $el_product.find('#quantity').val(quantity + 1);
-            });
-
-            $el_product.find('.quantity-left-minus').click(function (e) {
-                e.preventDefault();
-                var quantity = parseInt($el_product.find('#quantity').val());
-                if (quantity > 0) {
-                    $el_product.find('#quantity').val(quantity - 1);
-                }
-            });
-
-        });
-
     }
 
     window.goToSingleProduct = function (el) {
@@ -124,8 +98,6 @@ import {API_URL} from "./config";
     };
 
     window.addToCart = function (item) {
-        console.log(item.quantity);
-
         if (!item.quantity || item.quantity <= 0) {
             alert('Vui lòng chọn số lượng sản phẩm trước khi thêm vào giỏ hàng.');
             return;
@@ -160,10 +132,8 @@ import {API_URL} from "./config";
         }
 
         localStorage.setItem('cart', JSON.stringify(cart));
-
         updateCartBadge();
         updateOffcanvasCart();
-
         alert('Đã thêm sản phẩm vào giỏ hàng thành công!');
     };
 
@@ -199,7 +169,6 @@ import {API_URL} from "./config";
 
         initPreloader();
         initChocolat();
-        initProductQty();
 
         updateCartBadge();
         updateOffcanvasCart();
