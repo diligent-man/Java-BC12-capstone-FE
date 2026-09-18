@@ -125,10 +125,10 @@ import {API_URL} from "./config";
 
         if (existing) {
             existing.quantity = newTotalQty;
+            existing.maxQuantity = item.maxQuantity;
         } else {
-            var itemToStore = Object.assign({}, item);
-            delete itemToStore.maxQuantity;
-            cart.push(itemToStore);
+            // delete itemToStore.maxQuantity;
+            cart.push(Object.assign({}, item));
         }
 
         localStorage.setItem('cart', JSON.stringify(cart));

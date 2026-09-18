@@ -13,40 +13,31 @@ $(document).ready(function () {
 
     $(document).on('click', '.quantity-right-plus', function () {
         var index = $(this).attr('data-id');
-        var currentVariant = cart[index];
+        var item = cart[index];
 
-        if (!currentVariant)
-            return;
+        if (!item) return;
 
-        var input = currentVariant.quantity;
+        var max = item.maxQuantity != null ? item.maxQuantity : Infinity;
+        console.log(max);
 
-        var current = parseInt(input, 10);
-        if (isNaN(current)) current = 0;
-
-        var max = currentVariant.quantity || 0;
-
-        if (current < max) {
-            cart[index].quantity += 1;
+        if (item.quantity < max) {
+            item.quantity += 1;
+            saveAndRender();
+        } else {
+            alert(`Bạn đã có ${item.quantity} sản phẩm này trong giỏ hàng, đã đạt số lượng tồn kho tối đa.`);
         }
-        renderCart();
     });
 
     $(document).on('click', '.quantity-left-minus', function () {
         var index = $(this).attr('data-id');
-        var currentVariant = cart[index];
+        var item = cart[index];
 
-        if (!currentVariant)
-            return;
+        if (!item) return;
 
-        var current = parseInt(currentVariant.quantity, 10);
-        if (isNaN(current)) current = 0;
-
-        var max = currentVariant.quantity || 0;
-
-        if (current < max) {
-            cart[index].quantity += 1;
+        if (item.quantity > 0) {
+            item.quantity -= 1;
+            saveAndRender();
         }
-        renderCart();
     });
 
     // === SỰ KIỆN NÚT XÓA SẢN PHẨM ===

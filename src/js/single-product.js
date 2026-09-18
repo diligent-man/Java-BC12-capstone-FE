@@ -74,7 +74,6 @@ $(document).ready(function () {
         }
     });
 
-    // --- Quantity plus/minus: always re-check live value against currentVariant.quantity ---
     $(document).on('click', '.quantity-right-plus', function () {
         if (!currentVariant) return;
 
