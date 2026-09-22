@@ -1,16 +1,52 @@
-import { API_URL } from './config';
+import {API_URL} from './config';
 
 
 $(document).ready(function () {
+    // === TOGGLE UI BASED ON LOGIN STATE ===
+    function updateAccountPageUI() {
+        var token = localStorage.getItem('token');
+        if (token) {
+            $('.login-tabs').hide();
+            $('#logged-in-section').show();
+        } else {
+            $('.login-tabs').show();
+            $('#logged-in-section').hide();
+        }
+    }
+
+    $('#btn-logout').on('click', function (e) {
+        e.preventDefault();
+        var token = localStorage.getItem('token');
+
+        function finish() {
+            localStorage.removeItem('token');
+            window.location.href = 'index.html';
+        }
+
+        if (!token) {
+            finish();
+            return;
+        }
+
+        $.ajax({
+            url: `${API_URL}/auth/signout`,
+            type: 'POST',
+            headers: {'Authorization': 'Bearer ' + token}
+        }).always(finish);
+    });
+
+    updateAccountPageUI();
+
+    // === LOGIN ===
     $('#btn-login').click(function (e) {
-        e.preventDefault(); // Ngăn trang bị reload
+        e.preventDefault();
 
         var email = $('#lg-email').val();
         var password = $('#lg-password').val();
         var rememberMe = $('#remember-me').is(':checked');
 
         $.ajax({
-            url: `${API_URL}/auth/login`,
+            url: `${API_URL}/auth/signin`,
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify({
@@ -23,7 +59,13 @@ $(document).ready(function () {
                 console.log('Đăng nhập thành công:', result);
 
                 // 1. Lưu token vào localStorage
-                var token = (result.data && result.data.accessToken) ? result.data.accessToken : result.data;
+                var token = (result.data && result.data.token) ? result.data.token : null;
+
+                if (!token) {
+                    $('#login-alert').removeClass('d-none').text('Đăng nhập thất bại: không nhận được token.');
+                    return;
+                }
+
                 localStorage.setItem('token', token);
 
                 // 2. Đọc tham số "redirect" trên thanh địa chỉ URL (nếu có)
@@ -37,15 +79,12 @@ $(document).ready(function () {
             })
             .fail(function (xhr) {
                 var res = xhr.responseJSON;
-                // Backend trả về { code: "4xx", status: "Tài khoản bị khóa..." }
-                var errorMsg = (res && res.status) ? res.status : 'Đăng nhập thất bại, vui lòng thử lại!';
-
-                // Hiển thị thông báo lỗi lên giao diện
+                var errorMsg = (res && res.message) ? res.message : 'Đăng nhập thất bại, vui lòng thử lại!';
                 $('#login-alert').removeClass('d-none').text(errorMsg);
             });
     });
 
-    // ===== THÊM PHẦN SIGNUP BÊN DƯỚI =====
+    // ===== SIGNUP =====
     $('#btn-signup').click(function (e) {
         e.preventDefault();
         var fullName = $('#exampleInputName').val().trim();
@@ -53,7 +92,7 @@ $(document).ready(function () {
         var password = $('#inputPassword1').val().trim();
         var rePassword = $('#inputPassword2').val().trim();
         var alertBox = $('#signup-alert');
-        // 1. Kiểm tra dữ liệu trước khi gửi đi
+
         if (!fullName || !email || !password || !rePassword) {
             alertBox.removeClass('d-none alert-success').addClass('alert-danger')
                 .text('Vui lòng điền đầy đủ tất cả các trường!');
@@ -64,7 +103,7 @@ $(document).ready(function () {
                 .text('Mật khẩu nhập lại không khớp!');
             return;
         }
-        // 2. Gửi API lên Backend
+
         $.ajax({
             url: `${API_URL}/auth/signup`,
             type: 'POST',
@@ -78,7 +117,6 @@ $(document).ready(function () {
             .done(function () {
                 alertBox.removeClass('d-none alert-danger').addClass('alert-success')
                     .text('Đăng ký thành công! Vui lòng kiểm tra email để xác nhận.');
-                // Xóa trắng form sau khi đăng ký thành công
                 $('#exampleInputName').val('');
                 $('#exampleInputEmail1').val('');
                 $('#inputPassword1').val('');
@@ -91,5 +129,4 @@ $(document).ready(function () {
                     .text(errorMsg);
             });
     });
-
 });
