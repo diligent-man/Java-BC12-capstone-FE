@@ -1,8 +1,7 @@
-import { API_URL } from './config';
+import {API_URL} from './config';
 
 $(document).ready(function () {
-
-    // === 1. ĐỌC GIỎ HÀNG TỪ LOCALSTORAGE ===
+    var totalPrice = 0;
     var cart = [];
     var cartString = localStorage.getItem('cart');
     if (cartString) {
@@ -16,11 +15,10 @@ $(document).ready(function () {
         return;
     }
 
-    // === 2. HIỂN THỊ SUBTOTAL VÀ TOTAL TỪ GIỎ HÀNG ===
-    var totalPrice = 0;
-    for (var i = 0; i < cart.length; i++) {
-        totalPrice += cart[i].price * cart[i].quantity;
-    }
+    computeCartTotalPrice();
+    loadPaymentMethods();
+    loadCountries();
+
     $('#checkout-subtotal').text('$' + totalPrice.toFixed(2));
     $('#checkout-total').text('$' + totalPrice.toFixed(2));
 
@@ -40,7 +38,7 @@ $(document).ready(function () {
         var firstName = $('#fname').val().trim();
         var lastName = $('#lname').val().trim();
         var companyName = $('#cname').val().trim();
-        var countryId = $('#country-select').val();
+        var countryIso = $('#country-select').val();
         var address = $('#adr').val().trim();
         var town = $('#city').val().trim();
         var state = $('#state-input').val().trim();
@@ -59,19 +57,24 @@ $(document).ready(function () {
         var items = [];
         for (var i = 0; i < cart.length; i++) {
             items.push({
-                skuVariant: cart[i].sku,    // SKU là ID của variant trong DB
+                sku: cart[i].sku,
                 quantity: cart[i].quantity,
                 price: cart[i].price
             });
         }
 
-        // 3e. Build request body — ĐÚNG cấu trúc CheckoutRequest của BE
+        var paymentMethodName = $('input[name="listGroupRadios"]:checked').val();
+        if (!paymentMethodName) {
+            alert('Vui lòng chọn phương thức thanh toán!');
+            return;
+        }
+
         var requestBody = {
             billing: {
                 firstName: firstName,
                 lastName: lastName,
                 companyName: companyName || 'N/A',
-                countryId: parseInt(countryId) || 1,
+                countryIso: countryIso,
                 address: address,
                 town: town,
                 state: state,
@@ -80,7 +83,7 @@ $(document).ready(function () {
                 email: email
             },
             items: items,
-            paymentMethodId: 2,              // 2 = bank transfer (chuyển khoản)
+            paymentMethodName: paymentMethodName,
             totalAmount: totalPrice
         };
 
@@ -90,7 +93,7 @@ $(document).ready(function () {
 
         // 3g. Gọi API checkout
         $.ajax({
-            url: API_URL + '/order/checkout',
+            url: `${API_URL}/api/order/checkout`,
             type: 'POST',
             contentType: 'application/json',
             headers: {
@@ -98,34 +101,127 @@ $(document).ready(function () {
             },
             data: JSON.stringify(requestBody)
         })
-        .done(function (result) {
-            console.log('Checkout thành công:', result);
+            .done(function (result) {
+                console.log('Checkout thành công:', result);
+                var data = result.data;
 
-            var data = result.data;
-            // data = { orderId, qrUrl, amount, transferContent }
-
-            // Hiển thị modal QR
-            showQrModal(data.orderId, data.qrUrl, data.amount, data.transferContent);
-
-            
-        })
-        .fail(function (xhr) {
-            console.error('Checkout thất bại:', xhr);
-            var res = xhr.responseJSON;
-            var errorMsg = (res && res.message) ? res.message : 'Đặt hàng thất bại! Vui lòng thử lại.';
-            alert(errorMsg);
-        })
-        .always(function () {
-            $btn.prop('disabled', false).text('Place an order');
-        });
+                if (data !== null) {
+                    showQrModal(data.orderId, data.qrUrl, data.amount, data.transferContent);
+                } else {
+                    handleFail();
+                }
+            })
+            .fail(function (xhr) {
+                console.error('Checkout thất bại:', xhr);
+                handleFail(xhr);
+            })
+            .always(function () {
+                $btn.prop('disabled', false).text('Place an order');
+            });
     });
 
-    // === 4. HÀM HIỂN THỊ MODAL MÃ QR VỚI ĐẾM NGƯỢC 2 PHÚT ===
+    function computeCartTotalPrice() {
+        for (var i = 0; i < cart.length; i++) {
+            totalPrice += cart[i].price * cart[i].quantity;
+        }
+    }
+
+    async function loadCountries(defaultIso = 'VN') {
+        const select = document.getElementById('country-select');
+        select.innerHTML = '';
+
+        var token = localStorage.getItem('token');
+
+        if (!token) {
+            console.error('No token found, cannot load countries');
+            return;
+        }
+
+        try {
+            const res = await fetch(`${API_URL}/api/country`, {
+                headers: {
+                    'Authorization': 'Bearer ' + token
+                }
+            });
+
+            if (!res.ok)
+                console.error(new Error(`HTTP ${res.status}`));
+
+            const resp = await res.json();
+            const data = resp.data;
+            data.forEach(ele => {
+                const option = document.createElement('option');
+                option.value = ele.iso;
+                option.textContent = ele.name;
+                select.appendChild(option);
+            });
+
+            select.value = defaultIso;
+        } catch (err) {
+            console.error('Failed to load countries:', err);
+        }
+    }
+
+    function loadPaymentMethods() {
+        var token = localStorage.getItem('token');
+
+        $.ajax({
+            url: `${API_URL}/api/payment/methods`,
+            type: 'GET',
+            headers: {
+                'Authorization': 'Bearer ' + token
+            }
+        })
+            .done(function (result) {
+                var methods = result.data || [];
+                renderPaymentMethods(methods);
+            })
+            .fail(function (xhr) {
+                console.error('Load payment methods thất bại:', xhr);
+                $('#payment-method-list').html(
+                    '<p class="text-danger">Không thể tải phương thức thanh toán. Vui lòng thử lại.</p>'
+                );
+            });
+    }
+
+    function renderPaymentMethods(methods) {
+        var $container = $('#payment-method-list');
+        $container.empty();
+
+        if (methods.length === 0) {
+            $container.html('<p class="text-body-secondary">Không có phương thức thanh toán khả dụng.</p>');
+            return;
+        }
+
+        methods.forEach(function (method, index) {
+            var isChecked = index === 0 ? 'checked' : '';
+            var inputId = 'listGroupRadios' + index;
+
+            var $label = $(
+                '<label class="list-group-item d-flex gap-2 border-0">' +
+                '<input class="form-check-input flex-shrink-0" type="radio" ' +
+                'name="listGroupRadios" id="' + inputId + '" value="' + method.name + '" ' + isChecked + '>' +
+                '<span>' +
+                '<strong class="text-uppercase">' + method.name + '</strong>' +
+                '</span>' +
+                '</label>'
+            );
+
+            $container.append($label);
+        });
+    }
+
+    function handleFail(xhr) {
+        var res = xhr && xhr.responseJSON;
+        var errorMsg = (res && res.message) ? res.message : 'Đặt hàng thất bại! Vui lòng thử lại.';
+        alert(errorMsg);
+    }
+
     function showQrModal(orderId, qrUrl, amount, transferContent) {
         // 4a. Gán dữ liệu vào modal
         $('#qr-order-id').text('#' + orderId);
         $('#qr-image').attr('src', qrUrl);
-        $('#qr-amount').text('$' + amount);
+        $('#qr-amount').text(amount + 'VND');
         $('#qr-transfer-content').text(transferContent);
 
         // 4b. Hiển thị modal (dùng Bootstrap Modal API)
@@ -153,39 +249,42 @@ $(document).ready(function () {
         }, 1000); // Chạy mỗi 1 giây
 
         // 4d. Nếu user nhấn nút "Tôi đã thanh toán"
-                // 4d. Nếu user nhấn nút "Tôi đã thanh toán"
         $('#btn-payment-done').off('click').on('click', function () {
             var $btnDone = $(this);
             $btnDone.prop('disabled', true).text('Đang xác nhận...');
 
             var token = localStorage.getItem('token');
+            console.log(orderId)
 
-            // GỌI API XÁC NHẬN THANH TOÁN (Trigger Outbox Event ở BE)
             $.ajax({
-                url: API_URL + '/order/confirm/' + orderId,
+                url: `${API_URL}/api/order/confirm`,
                 type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    orderId: orderId
+                }),
                 headers: {
                     'Authorization': 'Bearer ' + token
                 }
             })
-            .done(function () {
-                clearInterval(countdown); // Dừng đếm ngược
-                qrModal.hide();
-                
-                // Tới đây mới thực sự đặt hàng thành công -> XÓA GIỎ HÀNG ở đây
-                localStorage.removeItem('cart');
-                if (typeof window.updateCartBadge === 'function') {
-                    window.updateCartBadge();
-                }
+                .done(function () {
+                    clearInterval(countdown); // Dừng đếm ngược
+                    qrModal.hide();
 
-                alert('Cảm ơn bạn! Đơn hàng #' + orderId + ' đang được xử lý.');
-                window.location.href = 'thank-you.html';
-            })
-            .fail(function (xhr) {
-                console.error('Xác nhận thất bại:', xhr);
-                alert('Có lỗi khi xác nhận thanh toán. Vui lòng thử lại!');
-                $btnDone.prop('disabled', false).text('Tôi đã thanh toán');
-            });
+                    // Tới đây mới thực sự đặt hàng thành công -> XÓA GIỎ HÀNG ở đây
+                    localStorage.removeItem('cart');
+                    if (typeof window.updateCartBadge === 'function') {
+                        window.updateCartBadge();
+                    }
+
+                    alert('Cảm ơn bạn! Đơn hàng #' + orderId + ' đang được xử lý.');
+                    window.location.href = 'thank-you.html';
+                })
+                .fail(function (xhr) {
+                    console.error('Xác nhận thất bại:', xhr);
+                    alert('Có lỗi khi xác nhận thanh toán. Vui lòng thử lại!');
+                    $btnDone.prop('disabled', false).text('Tôi đã thanh toán');
+                });
         });
     }
 
