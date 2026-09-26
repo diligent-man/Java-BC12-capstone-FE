@@ -1,0 +1,476 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>UniClub - Add New Product</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" type="text/css" href="/vendor/css/swiper-bundle.min.css">
+    <link rel="stylesheet" type="text/css" href="/vendor/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="src/icomoon/icomoon.css">
+    <link rel="stylesheet" type="text/css" href="src/css/vendor.css">
+    <link rel="stylesheet" type="text/css" href="src/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com/">
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;600;700&amp;family=Jost:wght@400;600;700&amp;display=swap" rel="stylesheet">
+
+    <style>
+        .add-product-section {
+            padding-top: 120px;
+            padding-bottom: 80px;
+            min-height: 80vh;
+            background: #f8f8f8;
+        }
+        .form-card {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 30px rgba(0,0,0,0.08);
+            padding: 2.5rem 3rem;
+        }
+        .form-card .section-title { font-size: 1.8rem; font-weight: 700; margin-bottom: 0.25rem; }
+        .form-card .section-subtitle { color: #908F8D; margin-bottom: 2rem; }
+        .form-label {
+            font-weight: 600; font-size: 0.875rem; text-transform: uppercase;
+            letter-spacing: 0.06rem; color: #222; margin-bottom: 0.4rem;
+        }
+        .form-control, .form-select {
+            border-radius: 8px; border: 1px solid rgba(65,64,62,0.2);
+            padding: 0.85rem 1rem; font-size: 0.95rem; color: #333;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #000; box-shadow: 0 0 0 0.15rem rgba(0,0,0,0.1);
+        }
+        .image-preview-box {
+            width: 100%; height: 240px; border: 2px dashed #dbdbdb; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center; flex-direction: column;
+            cursor: pointer; transition: border-color 0.3s; overflow: hidden; background: #fafafa;
+        }
+        .image-preview-box:hover { border-color: #000; }
+        .image-preview-box img { width: 100%; height: 100%; object-fit: cover; border-radius: 10px; }
+        .image-preview-box .upload-icon { font-size: 2.5rem; color: #dbdbdb; }
+        .image-preview-box .upload-text { color: #908F8D; font-size: 0.875rem; margin-top: 0.5rem; }
+        .btn-submit-product {
+            padding: 1rem 3rem; font-size: 1rem; font-weight: 700; letter-spacing: 0.08rem;
+            text-transform: uppercase; background: #000; color: #fff; border: 2px solid #000;
+            border-radius: 6px; transition: all 0.3s ease; width: 100%;
+        }
+        .btn-submit-product:hover { background: #fff; color: #000; }
+        .btn-submit-product:disabled { opacity: 0.6; cursor: not-allowed; }
+        #product-image-input { display: none; }
+        .divider-label {
+            font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1rem;
+            color: #908F8D; font-weight: 600; margin-top: 1.5rem; margin-bottom: 1rem;
+            border-bottom: 1px solid #f0f0f0; padding-bottom: 0.5rem;
+        }
+        .toast-msg {
+            position: fixed; top: 90px; right: 20px; z-index: 9999; min-width: 300px;
+            border-radius: 8px; padding: 1rem 1.5rem; font-size: 0.95rem; font-weight: 500;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15); animation: slideIn 0.3s ease;
+        }
+        .toast-success { background: #d1fae5; color: #065f46; border-left: 4px solid #059669; }
+        .toast-error { background: #fee2e2; color: #991b1b; border-left: 4px solid #dc2626; }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        .step-badge {
+        width: 36px; height: 36px; border-radius: 50%;
+        background: #dbdbdb; color: #777; font-weight: 700;
+        display: flex; align-items: center; justify-content: center;
+        flex-shrink: 0; transition: all 0.3s;
+        }
+        .step-badge.active { background: #000; color: #fff; }
+        .step-badge.done   { background: #059669; color: #fff; }
+        .step-label { font-weight: 600; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05rem; }
+        .step-divider { height: 2px; background: #dbdbdb; }
+        .btn-outline-product {
+        display: inline-flex; align-items: center; justify-content: center;
+        padding: 1rem 2rem; font-size: 1rem; font-weight: 700;
+        letter-spacing: 0.08rem; text-transform: uppercase;
+        background: #fff; color: #000; border: 2px solid #000;
+        border-radius: 6px; transition: all 0.3s ease; text-decoration: none;
+        white-space: nowrap;
+        }
+        .btn-outline-product:hover { background: #000; color: #fff; }
+        /* Nav tabs style */
+        .nav-tabs { border-bottom: 2px solid #dbdbdb; }
+        .nav-tabs .nav-link {
+            color: #908F8D; font-weight: 600; font-size: 0.875rem;
+            text-transform: uppercase; letter-spacing: 0.06rem;
+            border: none; border-bottom: 3px solid transparent;
+            padding: 0.75rem 1.5rem; margin-bottom: -2px;
+            transition: all 0.2s;
+        }
+        .nav-tabs .nav-link:hover { color: #000; }
+        .nav-tabs .nav-link.active { color: #000; border-bottom-color: #000; background: none; }
+
+        /* Search dropdown */
+        .search-dropdown {
+            position: absolute; z-index: 999; background: #fff;
+            border: 1px solid rgba(65,64,62,0.2); border-radius: 8px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            max-height: 240px; overflow-y: auto; width: 100%;
+        }
+        .search-dropdown-item {
+            padding: 0.75rem 1rem; cursor: pointer;
+            font-size: 0.95rem; border-bottom: 1px solid #f5f5f5;
+            transition: background 0.15s;
+        }
+        .search-dropdown-item:hover { background: #f8f8f8; }
+        .search-dropdown-item:last-child { border-bottom: none; }
+
+        /* Selected product card */
+        .selected-product-card {
+            background: #f0fdf4; border: 1.5px solid #059669;
+            border-radius: 8px; padding: 0.85rem 1rem;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="preloader-wrapper"><div class="preloader"></div></div>
+
+<div id="toast-container"></div>
+
+<!-- Offcanvas Cart -->
+<div class="offcanvas offcanvas-end" data-bs-scroll="true" tabindex="-1" id="offcanvasCart" aria-labelledby="My Cart">
+    <div class="offcanvas-header justify-content-center">
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <div class="order-md-last">
+            <h4 class="d-flex justify-content-between align-items-center mb-4">
+                <span class="text-primary">Your cart</span>
+                <span class="badge bg-primary rounded-circle pt-2" id="offcanvas-cart-count">0</span>
+            </h4>
+            <ul class="list-group mb-4" id="offcanvas-cart-items"></ul>
+            <a href="cart.html" class="w-100 btn btn-dark d-block text-center">Continue to checkout</a>
+        </div>
+    </div>
+</div>
+
+<!-- Navbar -->
+<nav class="main-menu d-flex navbar fixed-top navbar-expand-lg py-4">
+    <div class="container">
+        <div class="main-logo">
+            <a href="/"><img src="src/assets/images/logo.png" alt="logo" class="img-fluid"></a>
+        </div>
+        <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas"
+                data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+            <div class="offcanvas-header justify-content-center">
+                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body justify-content-between">
+                <ul class="navbar-nav menu-list list-unstyled d-flex gap-md-3 ps-lg-5 mb-0">
+                    <li class="nav-item"><a href="/" class="nav-link mx-2">Home</a></li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link mx-2 dropdown-toggle" role="button" id="pages"
+                           data-bs-toggle="dropdown" aria-expanded="false">Pages</a>
+                        <ul class="dropdown-menu" aria-labelledby="pages">
+                            <li><a href="about.html" class="dropdown-item">About Us</a></li>
+                            <li><a href="shop.html" class="dropdown-item">Shop</a></li>
+                            <li><a href="cart.html" class="dropdown-item">Cart</a></li>
+                            <li><a href="checkout.html" class="dropdown-item">Checkout</a></li>
+                            <li><a href="account.html" class="dropdown-item">Account</a></li>
+                            <li><a href="add-product.html" class="dropdown-item">Add Product</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item"><a href="shop.html" class="nav-link mx-2">Shop</a></li>
+                    <!-- <li class="nav-item"><a href="add-product.html" class="nav-link mx-2 active">Add Product</a></li> -->
+                </ul>
+                <div class="d-none d-lg-flex align-items-end">
+                    <ul class="d-flex justify-content-end list-unstyled m-0">
+                        <li>
+                            <a href="account.html" class="mx-3">
+                                <iconify-icon icon="healthicons:person" class="fs-4"></iconify-icon>
+                            </a>
+                        </li>
+                        <li class="">
+                            <a href="#" class="mx-3" data-bs-toggle="offcanvas"
+                               data-bs-target="#offcanvasCart" aria-controls="offcanvasCart">
+                                <iconify-icon icon="mdi:cart" class="fs-4 position-relative"></iconify-icon>
+                                <span class="position-absolute translate-middle badge rounded-circle bg-primary">00</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container d-lg-none">
+        <div class="d-flex align-items-end mt-3">
+            <ul class="d-flex justify-content-end list-unstyled m-0">
+                <li>
+                    <a href="account.html" class="me-4">
+                        <iconify-icon icon="healthicons:person" class="fs-4 me-2"></iconify-icon>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="me-4" data-bs-toggle="offcanvas"
+                       data-bs-target="#offcanvasCart" aria-controls="offcanvasCart">
+                        <iconify-icon icon="mdi:cart" class="fs-4 me-2 position-relative"></iconify-icon>
+                        <span class="position-absolute translate-middle badge rounded-circle bg-primary">00</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Banner -->
+<section id="banner" style="background-image:url(src/assets/images/banner-img2.jpg);">
+    <div class="container padding-medium-2">
+        <div class="hero-content">
+            <h2 class="display-1 fw-bold mt-5 mb-0">Add Product</h2>
+            
+        </div>
+    </div>
+</section>
+
+<section class="add-product-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10 col-xl-9">
+    <!-- Tab buttons -->
+    <ul class="nav nav-tabs mb-4" id="productTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="tab-product-btn"
+                    data-bs-toggle="tab" data-bs-target="#tab-product"
+                    type="button" role="tab">
+                <iconify-icon icon="tabler:box" class="me-2"></iconify-icon>
+                Add Product
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="tab-variant-btn"
+                    data-bs-toggle="tab" data-bs-target="#tab-variant"
+                    type="button" role="tab">
+                <iconify-icon icon="tabler:color-swatch" class="me-2"></iconify-icon>
+                Add Variant
+            </button>
+        </li>
+    </ul>
+
+    <div class="tab-content">
+
+        <!-- ── TAB 1: Add Product ── -->
+        <div class="tab-pane fade show active" id="tab-product" role="tabpanel">
+            <div class="form-card">
+                <h3 class="section-title">Add New Product</h3>
+                <p class="section-subtitle">Enter the basic product details. You can add variants later.</p>
+
+                <form id="form-product" novalidate>
+                    <div class="divider-label">Basic Info</div>
+                    <div class="row g-3">
+                        <div class="col-md-8">
+                            <label for="product-name" class="form-label">Product Name <span class="text-danger">*</span></label>
+                            <input type="text" id="product-name" class="form-control"
+                                   placeholder="e.g. Classic Cotton T-Shirt" required>
+                            <div class="invalid-feedback">Please enter a product name.</div>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="product-price" class="form-label">Price (USD) <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-white"
+                                      style="border:1px solid rgba(65,64,62,0.2); border-right:none; border-radius:8px 0 0 8px; padding:0.85rem 0.75rem;">$</span>
+                                <input type="number" id="product-price" class="form-control"
+                                       placeholder="0.00" min="0" step="0.01" required
+                                       style="border-radius:0 8px 8px 0;">
+                            </div>
+                            <div class="invalid-feedback">Please enter a valid price.</div>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="product-brand" class="form-label">Brand <span class="text-danger">*</span></label>
+                            <select id="product-brand" class="form-select" required>
+                                <option value="">-- Select Brand --</option>
+                            </select>
+                            <div class="invalid-feedback">Please select a brand.</div>
+                        </div>
+                        <div class="col-12">
+                            <label for="product-description" class="form-label">Description</label>
+                            <textarea id="product-description" class="form-control" rows="3"
+                                      placeholder="Short description shown in listing..."></textarea>
+                        </div>
+                        <div class="col-12">
+                            <label for="product-information" class="form-label">Information</label>
+                            <textarea id="product-information" class="form-control" rows="3"
+                                      placeholder="Detailed info: materials, care instructions..."></textarea>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <button type="submit" id="btn-product" class="btn-submit-product">
+                            <span id="btn-product-text">Save Product</span>
+                            <span id="btn-product-spinner" class="spinner-border spinner-border-sm ms-2"
+                                  style="display:none;" role="status"></span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- ── TAB 2: Add Variant ── -->
+        <div class="tab-pane fade" id="tab-variant" role="tabpanel">
+            <div class="form-card">
+                <h3 class="section-title">Add Variant</h3>
+                <p class="section-subtitle">Search for an existing product, then add a new color/size variant.</p>
+
+                <form id="form-variant" novalidate>
+                    <!-- Search product -->
+                    <div class="divider-label">Select Product</div>
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label for="search-product" class="form-label">Search Product by Name <span class="text-danger">*</span></label>
+                            <input type="text" id="search-product" class="form-control"
+                                   placeholder="Type product name..." autocomplete="off">
+                            <!-- Dropdown gợi ý -->
+                            <div id="search-dropdown" class="search-dropdown" style="display:none;"></div>
+                        </div>
+                        <!-- Hiện thông tin product đã chọn -->
+                        <div class="col-12" id="selected-product-info" style="display:none;">
+                            <div class="selected-product-card">
+                                <span class="text-muted" style="font-size:0.8rem; text-transform:uppercase; letter-spacing:0.05rem;">Selected Product</span>
+                                <p class="mb-0 fw-bold" id="selected-product-name"></p>
+                                <p class="mb-0 text-muted" style="font-size:0.85rem;">
+                                    ID: <span id="selected-product-id"></span> &nbsp;|&nbsp;
+                                    Price: $<span id="selected-product-price"></span>
+                                </p>
+                            </div>
+                        </div>
+                        <div id="product-search-error" class="text-danger" style="font-size:0.875rem; display:none;">
+                            Please select a product.
+                        </div>
+                    </div>
+
+                    <!-- Variant details -->
+                    <div class="divider-label mt-4">Variant Details</div>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label for="variant-color" class="form-label">Color <span class="text-danger">*</span></label>
+                            <select id="variant-color" class="form-select" required>
+                                <option value="">-- Select Color --</option>
+                            </select>
+                            <div class="invalid-feedback">Please select a color.</div>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="variant-size" class="form-label">Size <span class="text-danger">*</span></label>
+                            <select id="variant-size" class="form-select" required>
+                                <option value="">-- Select Size --</option>
+                            </select>
+                            <div class="invalid-feedback">Please select a size.</div>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="variant-quantity" class="form-label">Quantity <span class="text-danger">*</span></label>
+                            <input type="number" id="variant-quantity" class="form-control"
+                                   placeholder="e.g. 100" min="1" required>
+                            <div class="invalid-feedback">Please enter a valid quantity.</div>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Variant Image <span class="text-danger">*</span></label>
+                            <div class="image-preview-box" id="image-preview-box"
+                                 onclick="document.getElementById('variant-image-input').click()">
+                                <iconify-icon icon="tabler:photo-plus" class="upload-icon"></iconify-icon>
+                                <p class="upload-text mb-0">Click to upload variant image</p>
+                                <p class="upload-text" style="font-size:0.75rem;">PNG, JPG, WEBP up to 10MB</p>
+                            </div>
+                            <input type="file" id="variant-image-input" accept="image/*">
+                            <div id="image-error" class="mt-2" style="display:none;">
+                                <div style="
+                                    background: #fee2e2;
+                                    border: 1.5px solid #dc2626;
+                                    border-radius: 6px;
+                                    padding: 0.6rem 1rem;
+                                    color: #991b1b;
+                                    font-weight: 600;
+                                    font-size: 0.9rem;
+                                    display: flex;
+                                    align-items: center;
+                                    gap: 0.5rem;
+                                ">
+                                    <iconify-icon icon="tabler:alert-circle" style="font-size:1.1rem; flex-shrink:0;"></iconify-icon>
+                                    Please upload a variant image.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <button type="submit" id="btn-variant" class="btn-submit-product">
+                            <span id="btn-variant-text">Save Variant</span>
+                            <span id="btn-variant-spinner" class="spinner-border spinner-border-sm ms-2"
+                                  style="display:none;" role="status"></span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div><!-- end tab-content -->
+            </div><!-- end col-lg-10 -->
+        </div><!-- end row -->
+    </div><!-- end container -->
+</section><!-- end add-product-section -->
+
+<!-- Footer -->
+<footer id="footer" class="bg-black">
+    <div class="container padding-medium pt-5">
+        <div class="row mt-5">
+            <div class="col-md-4 offset-md-1">
+                <div class="footer-menu">
+                    <img src="src/assets/images/logo-dark.png" alt="logo">
+                    <div class="social-links mt-4">
+                        <ul class="d-flex list-unstyled gap-3">
+                            <li class="social"><a href="#"><iconify-icon class="social-icon fs-5 text-white me-4" icon="ri:facebook-fill"></iconify-icon></a></li>
+                            <li class="social"><a href="#"><iconify-icon class="social-icon fs-5 text-white me-4" icon="ri:twitter-fill"></iconify-icon></a></li>
+                            <li class="social"><a href="#"><iconify-icon class="social-icon fs-5 text-white me-4" icon="ri:pinterest-fill"></iconify-icon></a></li>
+                            <li class="social"><a href="#"><iconify-icon class="social-icon fs-5 text-white me-4" icon="ri:instagram-fill"></iconify-icon></a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="footer-menu">
+                    <h6 class="text-uppercase fw-bold text-white mb-4">Quick Links</h6>
+                    <ul class="menu-list list-unstyled">
+                        <li class="menu-item"><a href="index.html" class="footer-link">Home</a></li>
+                        <li class="menu-item"><a href="about.html" class="footer-link">About us</a></li>
+                        <li class="menu-item"><a href="shop.html" class="footer-link">Shop</a></li>
+                        <li class="menu-item"><a href="add-product.html" class="footer-link">Add Product</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<div id="footer-bottom" class="bg-black">
+    <hr class="m-0">
+    <div class="container padding-medium pt-3">
+        <div class="row mt-3">
+            <div class="col-md-6 copyright">
+                <p class="secondary-font">© 2023 UNICLUB. All rights reserved.</p>
+            </div>
+            <div class="col-md-6 text-md-end">
+                <p class="secondary-font">Free HTML Template by
+                    <a href="https://templatesjungle.com/" target="_blank"
+                       class="text-decoration-underline fw-bold text-white-50">TemplatesJungle</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/vendor/jquery.min.js"></script>
+<script src="/vendor/swiper-bundle.min.js"></script>
+<script src="/vendor/bootstrap.bundle.min.js"></script>
+<script src="/src/js/plugins.js"></script>
+<script src="/vendor/iconify-icon.min.js"></script>
+<script type="module" src="/src/js/script.js"></script>
+<script type="module" src="/src/js/add-product.js"></script>
+</body>
+</html>

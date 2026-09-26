@@ -44,10 +44,9 @@ $(document).ready(function () {
         var state = $('#state-input').val().trim();
         var zipCode = $('#zip').val().trim();
         var phone = $('#phone').val().trim();
-        var email = $('#email').val().trim();
 
         // 3c. Kiểm tra các trường bắt buộc
-        if (!firstName || !lastName || !address || !town || !state || !zipCode || !phone || !email) {
+        if (!firstName || !lastName || !address || !town || !state || !zipCode || !phone ) {
             alert('Vui lòng điền đầy đủ thông tin thanh toán!');
             return;
         }
@@ -79,8 +78,7 @@ $(document).ready(function () {
                 town: town,
                 state: state,
                 zipCode: zipCode,
-                phone: phone,
-                email: email
+                phone: phone
             },
             items: items,
             paymentMethodName: paymentMethodName,
