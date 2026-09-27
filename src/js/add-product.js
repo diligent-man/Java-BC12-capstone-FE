@@ -80,16 +80,10 @@ $(document).ready(function () {
 
         if (!isValid) return;
 
-        var formData = new FormData();
-        formData.append('name',        name);
-        formData.append('price',       price);
-        formData.append('idBrand',     idBrand);
-        formData.append('description', $('#product-description').val().trim());
-        formData.append('information', $('#product-information').val().trim());
 
-        $('#btn-step1').prop('disabled', true);
-        $('#btn-step1-text').text('Saving...');
-        $('#btn-step1-spinner').show();
+        $('#btn-product').prop('disabled', true);
+        $('#btn-product-text').text('Saving...');
+        $('#btn-product-spinner').show();
 
         $.ajax({
             method: 'POST',
@@ -106,16 +100,17 @@ $(document).ready(function () {
         .done(function (res) {
             savedProductId = res.data;   // productId trả về từ BE
             showToast(`Product created! ID: ${savedProductId}`, 'success');
-            goToStep2();
+            $('#form-product')[0].reset();
+            $('#form-product .is-valid').removeClass('is-valid');
         })
         .fail(function (err) {
             var msg = err.responseJSON?.message || 'Failed to create product.';
             showToast(msg, 'error');
         })
         .always(function () {
-            $('#btn-step1').prop('disabled', false);
-            $('#btn-step1-text').text('Continue to Add Variant');
-            $('#btn-step1-spinner').hide();
+            $('#btn-product').prop('disabled', false);
+            $('#btn-product-text').text('Save Product');
+            $('#btn-product-spinner').hide();
         });
     });
 
@@ -189,6 +184,12 @@ $(document).ready(function () {
         e.preventDefault();
 
         var isValid = true;
+        if (!selectedProduct) {
+            $('#product-search-error').show();
+            isValid = false;
+        } else {
+            $('#product-search-error').hide();
+        }
 
         var idColor = $('#variant-color').val();
         if (!idColor) { $('#variant-color').addClass('is-invalid'); isValid = false; }
@@ -228,7 +229,15 @@ $(document).ready(function () {
         })
         .done(function () {
             showToast('Variant added successfully!', 'success');
-            resetStep2();   // reset form để có thể thêm variant tiếp theo
+            $('#form-variant')[0].reset();
+            $('#form-variant .is-valid').removeClass('is-valid');
+            selectedProduct = null;
+            $('#selected-product-info').hide();
+            $('#image-preview-box').html(`
+                <iconify-icon icon="tabler:photo-plus" class="upload-icon"></iconify-icon>
+                <p class="upload-text mb-0">Click to upload variant image</p>
+                <p class="upload-text" style="font-size:0.75rem;">PNG, JPG, WEBP up to 10MB</p>
+            `);   // reset form để có thể thêm variant tiếp theo
         })
         .fail(function (err) {
             var msg = err.responseJSON?.message || 'Failed to add variant.';

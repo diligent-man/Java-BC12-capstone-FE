@@ -58,7 +58,6 @@
         }
         .btn-submit-product:hover { background: #fff; color: #000; }
         .btn-submit-product:disabled { opacity: 0.6; cursor: not-allowed; }
-        #product-image-input { display: none; }
         .divider-label {
             font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1rem;
             color: #908F8D; font-weight: 600; margin-top: 1.5rem; margin-bottom: 1rem;
@@ -75,25 +74,6 @@
             from { opacity: 0; transform: translateX(30px); }
             to { opacity: 1; transform: translateX(0); }
         }
-        .step-badge {
-        width: 36px; height: 36px; border-radius: 50%;
-        background: #dbdbdb; color: #777; font-weight: 700;
-        display: flex; align-items: center; justify-content: center;
-        flex-shrink: 0; transition: all 0.3s;
-        }
-        .step-badge.active { background: #000; color: #fff; }
-        .step-badge.done   { background: #059669; color: #fff; }
-        .step-label { font-weight: 600; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05rem; }
-        .step-divider { height: 2px; background: #dbdbdb; }
-        .btn-outline-product {
-        display: inline-flex; align-items: center; justify-content: center;
-        padding: 1rem 2rem; font-size: 1rem; font-weight: 700;
-        letter-spacing: 0.08rem; text-transform: uppercase;
-        background: #fff; color: #000; border: 2px solid #000;
-        border-radius: 6px; transition: all 0.3s ease; text-decoration: none;
-        white-space: nowrap;
-        }
-        .btn-outline-product:hover { background: #000; color: #fff; }
         /* Nav tabs style */
         .nav-tabs { border-bottom: 2px solid #dbdbdb; }
         .nav-tabs .nav-link {
@@ -342,7 +322,7 @@
                                 </p>
                             </div>
                         </div>
-                        <div id="product-search-error" class="text-danger" style="font-size:0.875rem; display:none;">
+                        <div id="product-search-error" class="invalid-feedback" style="font-size:0.875rem; display:none;">
                             Please select a product.
                         </div>
                     </div>
@@ -400,7 +380,7 @@
                     </div>
 
                     <div class="mt-4">
-                        <button type="submit" id="btn-variant" class="btn-submit-product">
+                        <button type="submit" id="btn-add-variant" class="btn-submit-product">
                             <span id="btn-variant-text">Save Variant</span>
                             <span id="btn-variant-spinner" class="spinner-border spinner-border-sm ms-2"
                                   style="display:none;" role="status"></span>
