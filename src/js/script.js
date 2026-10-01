@@ -1,7 +1,27 @@
 import {API_URL} from "./config";
+import {isAdmin} from "./auth.js";
 
 (function ($) {
     "use strict";
+
+    var initAdminGuard = function () {
+        var token = localStorage.getItem('token');
+
+        var $addProductLink = $('#dropdown-menu-add-product');
+        if (!isAdmin(token)) {
+            $addProductLink.closest('li').hide();
+        }
+
+        $addProductLink.on('click', function (e) {
+            e.preventDefault();
+            if (isAdmin(localStorage.getItem('token'))) {
+                window.location.href = 'add-product.html';
+            } else {
+                alert("Bạn cần đăng nhập dưới quyền admin để thêm sản phẩm!");
+                window.location.href = 'account.html?redirect=add-product.html';
+            }
+        });
+    }
 
     var initPreloader = function () {
         var hidePreloader = function () {
@@ -156,7 +176,7 @@ import {API_URL} from "./config";
         },
     });
 
-    // document ready
+// document ready
     $(document).ready(function () {
         window.addEventListener("load", (event) => {
 
@@ -169,8 +189,10 @@ import {API_URL} from "./config";
 
         initPreloader();
         initChocolat();
+        initAdminGuard();
 
         updateCartBadge();
         updateOffcanvasCart();
     });
-})(jQuery);
+})
+(jQuery);

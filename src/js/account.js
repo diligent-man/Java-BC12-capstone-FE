@@ -1,10 +1,10 @@
 import {API_URL} from './config';
-
+import {isAdmin} from './auth.js';
 
 $(document).ready(function () {
     // === TOGGLE UI BASED ON LOGIN STATE ===
     function updateAccountPageUI() {
-        var token = localStorage.getItem('token');
+        const token = localStorage.getItem('token');
         if (token) {
             $('.login-tabs').hide();
             $('#logged-in-section').show();
@@ -16,7 +16,7 @@ $(document).ready(function () {
 
     $('#btn-logout').on('click', function (e) {
         e.preventDefault();
-        var token = localStorage.getItem('token');
+        const token = localStorage.getItem('token');
 
         function finish() {
             localStorage.removeItem('token');
@@ -41,9 +41,9 @@ $(document).ready(function () {
     $('#btn-login').click(function (e) {
         e.preventDefault();
 
-        var email = $('#lg-email').val();
-        var password = $('#lg-password').val();
-        var rememberMe = $('#remember-me').is(':checked');
+        const email = $('#lg-email').val();
+        const password = $('#lg-password').val();
+        const rememberMe = $('#remember-me').is(':checked');
 
         $.ajax({
             url: `${API_URL}/auth/signin`,
@@ -59,7 +59,7 @@ $(document).ready(function () {
                 console.log('Đăng nhập thành công:', result);
 
                 // 1. Lưu token vào localStorage
-                var token = (result.data && result.data.token) ? result.data.token : null;
+                const token = (result.data && result.data.token) ? result.data.token : null;
 
                 if (!token) {
                     $('#login-alert').removeClass('d-none').text('Đăng nhập thất bại: không nhận được token.');
@@ -69,17 +69,26 @@ $(document).ready(function () {
                 localStorage.setItem('token', token);
 
                 // 2. Đọc tham số "redirect" trên thanh địa chỉ URL (nếu có)
-                var urlParams = new URLSearchParams(window.location.search);
-                var redirectUrl = urlParams.get('redirect');
-                if (redirectUrl) {
+                const urlParams = new URLSearchParams(window.location.search);
+                const redirectUrl = urlParams.get('redirect');
+
+                if (redirectUrl === 'add-product.html') {
+                    // this target is admin-only — verify role before honoring it
+                    if (isAdmin(token)) {
+                        window.location.href = 'add-product.html';
+                    } else {
+                        alert("Bạn cần đăng nhập dưới quyền admin để thêm sản phẩm!");
+                        window.location.href = 'index.html';
+                    }
+                } else if (redirectUrl) {
                     window.location.href = redirectUrl;
                 } else {
                     window.location.href = 'index.html';
                 }
             })
             .fail(function (xhr) {
-                var res = xhr.responseJSON;
-                var errorMsg = (res && res.message) ? res.message : 'Đăng nhập thất bại, vui lòng thử lại!';
+                const res = xhr.responseJSON;
+                const errorMsg = (res && res.message) ? res.message : 'Đăng nhập thất bại, vui lòng thử lại!';
                 $('#login-alert').removeClass('d-none').text(errorMsg);
             });
     });
@@ -87,11 +96,11 @@ $(document).ready(function () {
     // ===== SIGNUP =====
     $('#btn-signup').click(function (e) {
         e.preventDefault();
-        var fullName = $('#exampleInputName').val().trim();
-        var email = $('#exampleInputEmail1').val().trim();
-        var password = $('#inputPassword1').val().trim();
-        var rePassword = $('#inputPassword2').val().trim();
-        var alertBox = $('#signup-alert');
+        const fullName = $('#exampleInputName').val().trim();
+        const email = $('#exampleInputEmail1').val().trim();
+        const password = $('#inputPassword1').val().trim();
+        const rePassword = $('#inputPassword2').val().trim();
+        const alertBox = $('#signup-alert');
 
         if (!fullName || !email || !password || !rePassword) {
             alertBox.removeClass('d-none alert-success').addClass('alert-danger')
@@ -123,8 +132,8 @@ $(document).ready(function () {
                 $('#inputPassword2').val('');
             })
             .fail(function (xhr) {
-                var res = xhr.responseJSON;
-                var errorMsg = (res && res.status) ? res.status : 'Đăng ký thất bại! Vui lòng thử lại.';
+                const res = xhr.responseJSON;
+                const errorMsg = (res && res.status) ? res.status : 'Đăng ký thất bại! Vui lòng thử lại.';
                 alertBox.removeClass('d-none alert-success').addClass('alert-danger')
                     .text(errorMsg);
             });

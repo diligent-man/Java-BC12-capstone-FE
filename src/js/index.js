@@ -26,11 +26,14 @@ $(document).ready(function () {
                     for (let i = 0; i < data.length; i++) {
                         var item = data[i];
                         var stringJSON = JSON.stringify(item);
+                        var imgSrc = item.image !== null ?
+                            `${API_URL}/file/product/${item.image}` :
+                            `${API_URL}/file/product/default_cloth.jpg`
 
                         html += `<div class="col-md-6 col-lg-3 my-4">
                             <div class="product-item">
                               <div class="image-holder" style="width: 100%; height: 100%; aspect-ratio: 1 / 1; overflow: hidden;">
-                                    <img src="${API_URL}/file/product/${item.image}"
+                                    <img src="${imgSrc}"
                                          alt="Books"
                                          class="product-image img-fluid"
                                          style="width:100%; height:100%; object-fit: cover;"
