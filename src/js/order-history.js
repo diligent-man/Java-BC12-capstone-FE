@@ -143,7 +143,7 @@ $(document).ready(function () {
             badgeClass = 'bg-info text-dark';
         }
 
-        return '<span class="badge ' + badgeClass + ' rounded-pill px-3 py-2 text-uppercase">'
+        return '<span class="badge ' + badgeClass + ' rounded-pill px-3 py-2 text-uppercase" style="color: black">'
              + (status || 'UNKNOWN')
              + '</span>';
     }
