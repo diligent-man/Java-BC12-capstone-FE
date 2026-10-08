@@ -2,6 +2,8 @@ import {API_URL} from './config';
 import {isAdmin} from './auth.js';
 
 $(document).ready(function () {
+    updateOffcanvasCart();
+
     // === TOGGLE UI BASED ON LOGIN STATE ===
     function updateAccountPageUI() {
         const token = localStorage.getItem('token');
