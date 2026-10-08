@@ -265,7 +265,7 @@ $(document).ready(function () {
                     }
 
                     alert('Cảm ơn bạn! Đơn hàng #' + orderId + ' đang được xử lý.');
-                    window.location.href = 'thank-you.html';
+                    window.location.href = 'index.html';
                 })
                 .fail(function (xhr) {
                     console.error('Xác nhận thất bại:', xhr);
