@@ -46,7 +46,7 @@ $(document).ready(function () {
         var phone = $('#phone').val().trim();
 
         // 3c. Kiểm tra các trường bắt buộc
-        if (!firstName || !lastName || !address || !town || !state || !zipCode || !phone) {
+        if (!firstName || !lastName || !address || !town || !state || !zipCode || !phone ) {
             alert('Vui lòng điền đầy đủ thông tin thanh toán!');
             return;
         }
@@ -124,42 +124,6 @@ $(document).ready(function () {
         }
     }
 
-    async function loadCountries(defaultIso = 'VN') {
-        const select = document.getElementById('country-select');
-        select.innerHTML = '';
-
-        var token = localStorage.getItem('token');
-
-        if (!token) {
-            console.error('No token found, cannot load countries');
-            return;
-        }
-
-        try {
-            const res = await fetch(`${API_URL}/api/country`, {
-                headers: {
-                    'Authorization': 'Bearer ' + token
-                }
-            });
-
-            if (!res.ok)
-                console.error(new Error(`HTTP ${res.status}`));
-
-            const resp = await res.json();
-            const data = resp.data;
-            data.forEach(ele => {
-                const option = document.createElement('option');
-                option.value = ele.iso;
-                option.textContent = ele.name;
-                select.appendChild(option);
-            });
-
-            select.value = defaultIso;
-        } catch (err) {
-            console.error('Failed to load countries:', err);
-        }
-    }
-
     function loadCountries(defaultIso = 'VN') {
         const $select = $('#country-select').empty();
         const token = localStorage.getItem('token');
@@ -172,16 +136,38 @@ $(document).ready(function () {
         $.ajax({
             url: `${API_URL}/api/country`,
             type: 'GET',
-            headers: {'Authorization': 'Bearer ' + token}
+            headers: { 'Authorization': 'Bearer ' + token }
         })
             .done(function (resp) {
                 (resp.data || []).forEach(ele => {
-                    $select.append($('<option>', {value: ele.iso, text: ele.name}));
+                    $select.append($('<option>', { value: ele.iso, text: ele.name }));
                 });
                 $select.val(defaultIso);
             })
             .fail(function (xhr) {
                 console.error('Failed to load countries:', xhr.status);
+            });
+    }
+
+    function loadPaymentMethods() {
+        var token = localStorage.getItem('token');
+
+        $.ajax({
+            url: `${API_URL}/api/payment/methods`,
+            type: 'GET',
+            headers: {
+                'Authorization': 'Bearer ' + token
+            }
+        })
+            .done(function (result) {
+                var methods = result.data || [];
+                renderPaymentMethods(methods);
+            })
+            .fail(function (xhr) {
+                console.error('Load payment methods thất bại:', xhr);
+                $('#payment-method-list').html(
+                    '<p class="text-danger">Không thể tải phương thức thanh toán. Vui lòng thử lại.</p>'
+                );
             });
     }
 
