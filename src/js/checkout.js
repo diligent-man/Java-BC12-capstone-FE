@@ -46,7 +46,7 @@ $(document).ready(function () {
         var phone = $('#phone').val().trim();
 
         // 3c. Kiểm tra các trường bắt buộc
-        if (!firstName || !lastName || !address || !town || !state || !zipCode || !phone ) {
+        if (!firstName || !lastName || !address || !town || !state || !zipCode || !phone) {
             alert('Vui lòng điền đầy đủ thông tin thanh toán!');
             return;
         }
@@ -160,25 +160,28 @@ $(document).ready(function () {
         }
     }
 
-    function loadPaymentMethods() {
-        var token = localStorage.getItem('token');
+    function loadCountries(defaultIso = 'VN') {
+        const $select = $('#country-select').empty();
+        const token = localStorage.getItem('token');
+
+        if (!token) {
+            console.error('No token found, cannot load countries');
+            return;
+        }
 
         $.ajax({
-            url: `${API_URL}/api/payment/methods`,
+            url: `${API_URL}/api/country`,
             type: 'GET',
-            headers: {
-                'Authorization': 'Bearer ' + token
-            }
+            headers: {'Authorization': 'Bearer ' + token}
         })
-            .done(function (result) {
-                var methods = result.data || [];
-                renderPaymentMethods(methods);
+            .done(function (resp) {
+                (resp.data || []).forEach(ele => {
+                    $select.append($('<option>', {value: ele.iso, text: ele.name}));
+                });
+                $select.val(defaultIso);
             })
             .fail(function (xhr) {
-                console.error('Load payment methods thất bại:', xhr);
-                $('#payment-method-list').html(
-                    '<p class="text-danger">Không thể tải phương thức thanh toán. Vui lòng thử lại.</p>'
-                );
+                console.error('Failed to load countries:', xhr.status);
             });
     }
 
