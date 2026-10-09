@@ -135,7 +135,7 @@ $(document).ready(function () {
             })
             .fail(function (xhr) {
                 const res = xhr.responseJSON;
-                const errorMsg = (res && res.status) ? res.status : 'Đăng ký thất bại! Vui lòng thử lại.';
+                const errorMsg = (res && res.message) ? res.message : 'Đăng ký thất bại! Vui lòng thử lại.';
                 alertBox.removeClass('d-none alert-success').addClass('alert-danger')
                     .text(errorMsg);
             });
